@@ -1,0 +1,7 @@
+#!/bin/sh
+cd "$(dirname "$0")"
+PORT=5178 nohup node server.js >/dev/null 2>&1 &
+sleep 1
+echo "Server started in background (PID $!). Stop: ./close.sh"
+echo "Share ONE of these LAN links (same network):"
+node -e "for(const a of Object.values(require('os').networkInterfaces()).flat())if(a.family==='IPv4'&&!a.internal)console.log('  http://'+a.address+':5178/')"

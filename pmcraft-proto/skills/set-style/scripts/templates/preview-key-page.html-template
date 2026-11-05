@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关键页风格试制 - {style_name}</title>
+  <style>
+    :root {
+      --color-primary: {primary_hex};
+      --color-accent: {accent_hex};
+      --color-background: {background_hex};
+      --color-surface: {surface_hex};
+      --color-text: {text_hex};
+      --color-border: {border_hex};
+      --color-danger: {danger_hex};
+      --color-success: {success_hex};
+      --color-warning: {warning_hex};
+      --font-heading: '{heading_font}', sans-serif;
+      --font-body: '{body_font}', sans-serif;
+      --radius-sm: {radius_sm}px;
+      --radius-md: {radius_md}px;
+      --radius-lg: {radius_lg}px;
+      --shadow-md: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-body); background: var(--color-background); color: var(--color-text); }
+    .warn-banner { background: #fff3cd; padding: 12px; text-align: center; font-size: 14px; }
+    .header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .header h1 { font-family: var(--font-heading); font-size: 20px; }
+    .header .btn { background: var(--color-primary); color: #fff; border: none; border-radius: var(--radius-md); padding: 8px 16px; cursor: pointer; }
+    .main { padding: 24px; max-width: 900px; margin: 0 auto; }
+    .card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-md); }
+    .card h2 { font-family: var(--font-heading); font-size: 18px; margin-bottom: 8px; }
+    .card p { font-size: 14px; line-height: 1.6; color: var(--color-text); }
+    .form-row { margin-bottom: 12px; }
+    .form-row label { display: block; font-size: 13px; margin-bottom: 4px; }
+    .form-row input { width: 100%; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 14px; }
+    .btn-primary { background: var(--color-primary); color: #fff; border: none; border-radius: var(--radius-md); padding: 10px 20px; font-size: 14px; cursor: pointer; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 12px; }
+    .badge-success { background: var(--color-success); color: #fff; }
+    .badge-danger { background: var(--color-danger); color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="warn-banner">&#x26a0;&#xfe0f; 本页仅用于评估配色、间距、字体、布局比例等视觉风格，不包含功能交互。正式原型由 build-prototype 后续生成。</div>
+
+  <header class="header">
+    <h1>标题占位</h1>
+    <button class="btn">按钮占位</button>
+  </header>
+
+  <main class="main">
+    <div class="card">
+      <h2>卡片标题占位</h2>
+      <p>描述文字占位。Lorem ipsum dolor sit amet, consectetur adipiscing elit. 用于评估字体、间距、行高与卡片内边距的视觉比例。</p>
+      <div style="margin-top: 12px;">
+        <span class="badge badge-success">成功占位</span>
+        <span class="badge badge-danger">危险占位</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>表单标题占位</h2>
+      <div class="form-row">
+        <label>输入框占位</label>
+        <input type="text" placeholder="输入占位文字">
+      </div>
+      <div class="form-row">
+        <label>输入框占位 2</label>
+        <input type="text" placeholder="输入占位文字">
+      </div>
+      <button class="btn-primary">提交按钮占位</button>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,491 @@
+/* pmcraft 文档门户 — 门户页 + 文档阅读页共用样式
+ * 由 scripts/lib/readme-portal.cjs（save-doc 内嵌模块）生成的页面引用；可直接修改后重开页面生效 */
+
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --border: #e2e6eb;
+  --text: #1f2733;
+  --text-2: #5b6675;
+  --text-3: #8a93a2;
+  --accent: #2563eb;
+  --accent-soft: #eaf1fe;
+  --accent-border: #c3d7fa;
+  --ok: #16803c;
+  --ok-soft: #e8f6ec;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 4px 14px rgba(16, 24, 40, .06);
+  --radius: 10px;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161c;
+    --surface: #1a2029;
+    --surface-2: #222a35;
+    --border: #303b48;
+    --text: #e4e9f0;
+    --text-2: #a7b1bf;
+    --text-3: #74808f;
+    --accent: #6ea8ff;
+    --accent-soft: #1c2a41;
+    --accent-border: #2e4368;
+    --ok: #6fd39a;
+    --ok-soft: #17281e;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 14px rgba(0, 0, 0, .35);
+  }
+}
+
+* { box-sizing: border-box; }
+
+@supports (-webkit-text-size-adjust: 100%) {
+  html { -webkit-text-size-adjust: 100%; }
+}
+@supports (text-size-adjust: 100%) {
+  html { text-size-adjust: 100%; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ========== 门户页（README.html） ========== */
+
+.portal-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 0 22px;
+}
+
+/* padding 结构与 portal-main 一致（内容盒内 24px）——标题与下方分区标题左对齐 */
+.portal-header .inner { max-width: 1020px; margin: 0 auto; padding: 0 24px; }
+
+.portal-title {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.portal-sub { color: var(--text-2); font-size: 13px; }
+
+.portal-main { max-width: 1020px; margin: 0 auto; padding: 24px 24px 56px; }
+
+.info-banner {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin: 0 0 22px;
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.info-banner p { margin: 0; }
+.info-banner p + p { margin-top: 4px; }
+
+.section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 28px 0 12px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.section-title .count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 999px;
+  vertical-align: 2px;
+}
+.tag-review { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-border); }
+.tag-proto   { background: var(--ok-soft); color: var(--ok); border: 1px solid transparent; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 16px 14px 44px;
+  transition: border-color .15s, transform .15s;
+}
+
+a.card { color: inherit; }
+a.card:hover { text-decoration: none; border-color: var(--accent); transform: translateY(-1px); }
+
+.card .label { font-weight: 600; font-size: 15px; line-height: 24px; }
+
+/* 阅读顺序序号徽章（圆角正方形线框，卡片左上角，弱视觉） */
+.card .num {
+  position: absolute;
+  top: 16px;              /* 卡片 padding-top 14px + (标题行高 24px - 徽章 20px) / 2 —— 与标题首行中线对齐 */
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.card.is-missing .num { color: var(--text-3); }
+
+.card .label .badge-req { color: var(--accent); font-weight: 500; font-size: 12px; margin-left: 6px; }
+
+.card .path {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-3);
+  word-break: break-all;
+}
+
+.card .desc { font-size: 12.5px; color: var(--text-2); }
+
+.card .children { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
+.card .children a { font-size: 13.5px; font-weight: 500; }
+.card .children a::before { content: "↳ "; color: var(--text-3); font-weight: 400; }
+
+.card.is-missing { opacity: .6; }
+.card.is-missing .label { color: var(--text-2); font-weight: 500; }
+
+.none-note { color: var(--text-3); font-size: 13px; margin: 4px 0 0; }
+
+.portal-footer {
+  margin-top: 40px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: 12.5px;
+}
+.portal-footer code {
+  font-family: var(--mono);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 12px;
+}
+
+/* ========== 文档阅读页 ========== */
+
+.breadcrumb {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+}
+
+/* 宽度与下方正文区对齐：有目录页 1220（返回键与 TOC 栏左对齐），无目录页 900；padding 结构与 doc-wrap 一致 */
+.breadcrumb .inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  font-size: 13.5px;
+}
+.breadcrumb.has-toc .inner { max-width: 1220px; }
+
+.breadcrumb .back { white-space: nowrap; }
+
+/* 系统文件烘焙页（_进度清单.md 等）：右侧快照时间标注——该页是门户构建时的快照，随清单刷新会滞后 */
+.breadcrumb .snap-note {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.breadcrumb .snap-note a { margin-left: 4px; }
+
+.doc-wrap { max-width: 900px; margin: 0 auto; padding: 24px 24px 72px; }
+
+/* 左侧固定目录布局（有 TOC 的页面） */
+.doc-wrap.has-toc {
+  max-width: 1220px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.toc-side {
+  flex: 0 0 250px;
+  position: sticky;
+  top: 58px;                       /* 面包屑高度 + 间距 */
+  max-height: calc(100vh - 74px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.doc-wrap.has-toc article.doc { flex: 1 1 auto; min-width: 0; }
+
+@media (max-width: 980px) {
+  .doc-wrap.has-toc { display: block; max-width: 900px; }
+  .toc-side { position: static; width: auto; max-height: none; overflow: visible; margin-bottom: 16px; }
+}
+
+.toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 0 0 20px;
+  padding: 8px 14px;
+  font-size: 13.5px;
+}
+
+.toc summary { cursor: pointer; font-weight: 600; color: var(--text-2); padding: 4px 0; }
+.toc ul { margin: 4px 0 8px; padding: 0 0 0 6px; list-style: none; }
+.toc li { padding: 2px 0; }
+.toc li.lv3 { padding-left: 18px; font-size: 13px; }
+.toc a { color: var(--text-2); }
+.toc a:hover { color: var(--accent); }
+
+article.doc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 30px 36px 40px;
+}
+
+article.doc > :first-child { margin-top: 0; }
+
+article.doc h1 {
+  font-size: 22px;
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+
+article.doc h2 { font-size: 18px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+article.doc h3 { font-size: 15.5px; margin: 20px 0 8px; }
+article.doc h4 { font-size: 14.5px; margin: 16px 0 6px; }
+
+article.doc p { margin: 8px 0; }
+
+article.doc blockquote {
+  margin: 12px 0;
+  padding: 8px 14px;
+  border-left: 3px solid var(--accent-border);
+  background: var(--accent-soft);
+  border-radius: 0 8px 8px 0;
+  color: var(--text-2);
+}
+
+article.doc blockquote p { margin: 4px 0; }
+
+article.doc table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 14px 0;
+  font-size: 13.5px;
+  display: block;
+  overflow-x: auto;
+}
+
+article.doc th, article.doc td {
+  border: 1px solid var(--border);
+  padding: 7px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+article.doc th { background: var(--surface-2); font-weight: 600; white-space: nowrap; }
+article.doc tr:nth-child(even) td { background: color-mix(in srgb, var(--surface-2) 45%, transparent); }
+
+article.doc code {
+  font-family: var(--mono);
+  font-size: .92em;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .1em .35em;
+}
+
+article.doc pre {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+article.doc pre code { background: none; border: none; padding: 0; font-size: inherit; }
+
+article.doc ul, article.doc ol { padding-left: 24px; margin: 8px 0; }
+article.doc li { margin: 3px 0; }
+
+article.doc hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+
+article.doc img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; margin: 6px 0; }
+
+/* mermaid 图表容器：宽图缩列 + 横向滚动兜底 */
+.mermaid {
+  margin: 16px 0;
+  padding: 14px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow-x: auto;
+  text-align: center;
+}
+.mermaid svg { max-width: 100%; height: auto; }
+.mermaid[data-error] { border-color: #d92d20; color: #d92d20; font-family: var(--mono); font-size: 12px; text-align: left; }
+
+/* 图表外层：仅定位锚点（缺省无盒模型影响，mermaid 的 16px 外边距照旧透出），放大按钮挂在此层不随图横向滚动 */
+.diagram { position: relative; }
+
+/* 放大入口：图右上角常显（弱化），悬停/聚焦时提亮——静态文档页里藏起来等于没有入口。
+   未渲染出 svg 时由脚本保持 hidden（渲染失败的图不给无效入口） */
+.diagram-zoom {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-2);
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1.6;
+  cursor: pointer;
+  opacity: .5;
+  transition: opacity .15s, border-color .15s, color .15s;
+}
+.diagram:hover .diagram-zoom, .diagram-zoom:focus-visible { opacity: 1; }
+.diagram-zoom:hover { border-color: var(--accent); color: var(--accent); }
+.diagram-zoom[hidden] { display: none; }
+@media (hover: none) { .diagram-zoom { opacity: .9; } }
+
+/* ========== 图表放大查看层（由 assets/portal-zoom.js 生成） ========== */
+
+.zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: rgba(16, 24, 40, .8);
+}
+
+@media (prefers-color-scheme: dark) { .zoom-overlay { background: rgba(0, 0, 0, .82); } }
+
+.zoom-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.zoom-title {
+  margin-right: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zoom-hint { margin-right: auto; color: var(--text-3); font-size: 12.5px; }
+
+.zoom-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.zoom-btn:hover { border-color: var(--accent); color: var(--accent); }
+.zoom-btn.is-primary { border-color: var(--accent-border); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+.zoom-pct {
+  min-width: 46px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.zoom-stage {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;          /* 触摸拖拽平移而非滚动页面 */
+  overscroll-behavior: contain;
+}
+.zoom-stage.is-panning { cursor: grabbing; }
+
+/* 画布盒固定为图自然尺寸，位移与缩放全走 transform（0 0 原点便于指针定点缩放） */
+.zoom-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.zoom-canvas svg {
+  display: block;
+  max-width: none !important;  /* 覆盖 mermaid 内联 max-width */
+  background: var(--surface);  /* 图底随门户主题，深色模式下与页面观感一致 */
+  border-radius: 6px;
+}
+
+@media (max-width: 760px) {
+  .zoom-hint { display: none; }
+  .zoom-title { max-width: 34%; }
+}
+
+@media (max-width: 640px) {
+  article.doc { padding: 20px 18px 30px; }
+  .cards { grid-template-columns: 1fr; }
+}
+
+@media print {
+  body { background: #fff; }
+  .breadcrumb, .toc, .portal-footer, .diagram-zoom, .zoom-overlay { display: none; }
+  article.doc, .card { box-shadow: none; }
+}

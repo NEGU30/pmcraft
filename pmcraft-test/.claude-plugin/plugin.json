@@ -1,0 +1,8 @@
+{
+  "name": "pmcraft-test",
+  "version": "0.0.1",
+  "description": "自动化测试插件 — 从 PRD 和测试用例出发，驱动 Playwright 完成 Web 自动化功能测试全流程（脚本生成→执行→人工补充→报告→体验走查→复盘沉淀）",
+  "author": {
+    "name": "pmcraft"
+  }
+}

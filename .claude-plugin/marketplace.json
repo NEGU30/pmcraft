@@ -1,0 +1,37 @@
+{
+  "name": "pmcraft",
+  "version": "0.0.1",
+  "owner": {
+    "name": "pmcraft"
+  },
+  "plugins": [
+    {
+      "name": "pmcraft-coach",
+      "source": "./pmcraft-coach"
+    },
+    {
+      "name": "pmcraft-prompt",
+      "source": "./pmcraft-prompt"
+    },
+    {
+      "name": "pmcraft-req",
+      "source": "./pmcraft-req"
+    },
+    {
+      "name": "pmcraft-proto",
+      "source": "./pmcraft-proto"
+    },
+    {
+      "name": "pmcraft-dev",
+      "source": "./pmcraft-dev"
+    },
+    {
+      "name": "pmcraft-infra",
+      "source": "./pmcraft-infra"
+    },
+    {
+      "name": "pmcraft-test",
+      "source": "./pmcraft-test"
+    }
+  ]
+}

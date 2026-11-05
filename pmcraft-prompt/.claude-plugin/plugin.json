@@ -1,0 +1,8 @@
+{
+  "name": "pmcraft-prompt",
+  "version": "0.0.1",
+  "description": "提示词工程插件 — 文字提示词和文生图提示词的设计与撰写",
+  "author": {
+    "name": "pmcraft"
+  }
+}

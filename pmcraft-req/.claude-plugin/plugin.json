@@ -1,0 +1,8 @@
+{
+  "name": "pmcraft-req",
+  "version": "0.0.1",
+  "description": "需求工程插件 — 从探索到验证到澄清到撰写的四阶段需求全流程",
+  "author": {
+    "name": "pmcraft"
+  }
+}

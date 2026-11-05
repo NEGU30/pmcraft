@@ -1,0 +1,46 @@
+{
+  "session": {
+    "e2eDir": "20260813_105413",
+    "targetUrl": "http://localhost:8080",
+    "featureName": "枪火WeGame迁移查询",
+    "persona": "第一次用迁移服务的玩家",
+    "executor": "昵称, 12345",
+    "startedAt": "2026-08-13T15:30:00",
+    "verdict": null,
+    "crossCheck": null
+  },
+  "conditions": [],
+  "journeys": [
+    {
+      "id": "J1",
+      "name": "查询迁移资格",
+      "source": "PRD 用户故事 US-01",
+      "status": "COMPLETE",
+      "path": ["登录", "进入查询页", "输入枪号", "查询", "查看结果"]
+    },
+    {
+      "id": "J2",
+      "name": "提交迁移申请",
+      "source": "PRD 用户故事 US-02",
+      "status": "COMPLETE",
+      "path": ["填写申请", "确认信息", "提交", "查看结果"]
+    }
+  ],
+  "findings": [
+    {
+      "id": "WT-F-1",
+      "journeyId": "J1",
+      "step": "查询结果",
+      "executor": "pm",
+      "type": "体验问题",
+      "severity": "中等",
+      "origin": "exploration",
+      "description": "查询结果为空时页面白板无空态提示",
+      "emotion": "困惑",
+      "screenshot": "walkthrough-evidence/WT-F-1_空态.png",
+      "relatedTc": null,
+      "followUp": "仅记录",
+      "suggestedFix": "补充空态引导文案"
+    }
+  ]
+}

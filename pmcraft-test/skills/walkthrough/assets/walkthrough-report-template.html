@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>体验走查报告样式（单一事实来源）</title>
+<!--
+  ⚠️ 本文件是体验走查报告样式的单一事实来源：walkthrough-report-gen.cjs 正则提取本文件的样式块
+  （STYLE 标签内的内容）嵌入生成的 walkthrough-report.html。除样式块外的任何内容
+  （含 body 模板体）都不会被渲染 —— 请不要在此添加模板占位符或 HTML 结构，
+  也不要在此注释中写出 STYLE 开标签字样（会干扰提取正则）。
+  渲染逻辑全部在 assets/scripts/walkthrough-report-gen.cjs 内（字符串拼接生成 HTML）。
+-->
+<style>
+:root {
+  --go: #22C55E; --cond: #F59E0B; --nogo: #EF4444;
+  --severe: #DC2626; --medium: #F59E0B; --minor: #64748B;
+  --bg: #F8FAFC; --card: #FFFFFF; --text: #1E293B;
+  --text-secondary: #64748B; --border: #E2E8F0;
+  --primary: #2563EB; --radius: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: "Segoe UI", -apple-system, sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; padding:24px; }
+h1 { font-size:20px; margin-bottom:4px; }
+h2 { font-size:16px; margin:24px 0 12px; }
+.meta { color:var(--text-secondary); font-size:12px; margin-bottom:24px; }
+
+/* 接受度表态（顶部决策卡片） */
+.verdict-card { background:var(--card); border:1px solid var(--border); border-left:5px solid var(--primary); border-radius:var(--radius); padding:16px 20px; margin-bottom:12px; }
+.verdict-card.go { border-left-color:var(--go); }
+.verdict-card.cond { border-left-color:var(--cond); }
+.verdict-card.nogo { border-left-color:var(--nogo); }
+.verdict-title { font-size:16px; font-weight:700; margin-bottom:4px; }
+.verdict-card.go .verdict-title { color:var(--go); }
+.verdict-card.cond .verdict-title { color:var(--cond); }
+.verdict-card.nogo .verdict-title { color:var(--nogo); }
+.verdict-note { font-size:13px; color:var(--text); }
+.verdict-conditions { margin-top:8px; padding-left:20px; }
+.verdict-conditions li { font-size:13px; margin-bottom:2px; }
+.disclaimer { font-size:12px; color:var(--text-secondary); margin-top:10px; padding:8px 12px; background:#FFFBEB; border-left:3px solid var(--cond); border-radius:4px; }
+
+/* 旅程总览 */
+.journey-item { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; margin-bottom:8px; }
+.journey-header { display:flex; align-items:center; gap:10px; margin-bottom:4px; flex-wrap:wrap; }
+.journey-id { font-weight:700; font-size:13px; }
+.journey-name { font-size:13px; }
+.journey-path { font-size:12px; color:var(--text-secondary); }
+
+/* 发现清单 */
+.issue-item { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--medium); border-radius:var(--radius); padding:10px 14px; margin-bottom:8px; }
+.issue-item.severe { border-left-color:var(--severe); }
+.issue-item.medium { border-left-color:var(--medium); }
+.issue-item.minor { border-left-color:var(--minor); }
+.issue-header { display:flex; align-items:center; gap:10px; margin-bottom:4px; flex-wrap:wrap; }
+.issue-id { font-weight:700; font-size:13px; }
+.issue-desc { font-size:13px; color:var(--text); line-height:1.6; }
+.issue-extra { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+.issue-fix { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+.issue-fix b { color:var(--text); }
+
+/* 情绪记录 */
+.emotion-block { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; margin-bottom:8px; }
+.emotion-tag { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600; margin-right:6px; }
+.emotion-frustration { background:#FEE2E2; color:#DC2626; }
+.emotion-confusion { background:#FEF3C7; color:#D97706; }
+.emotion-delight { background:#DCFCE7; color:#16A34A; }
+
+/* 多视角对比 */
+.cross-item { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; margin-bottom:8px; }
+.cross-tag { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600; margin-right:6px; }
+.cross-both { background:#DCFCE7; color:#16A34A; }
+.cross-pm { background:#E0E7FF; color:#4F46E5; }
+.cross-peer { background:#FCE7F3; color:#DB2777; }
+
+/* 通用 */
+table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:24px; }
+th, td { padding:10px 14px; text-align:left; border-bottom:1px solid var(--border); }
+th { background:#F1F5F9; font-weight:600; font-size:13px; }
+td { font-size:13px; }
+.badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600; }
+.badge-severe { background:#FEE2E2; color:#DC2626; }
+.badge-medium { background:#FEF3C7; color:#D97706; }
+.badge-minor { background:#F1F5F9; color:#64748B; }
+.badge-exec { background:#E0E7FF; color:#4F46E5; }
+.section-note { font-size:12px; color:var(--text-secondary); margin:4px 0 12px; }
+.link-note { font-size:12px; color:var(--text-secondary); margin-top:24px; }
+</style>
+</head>
+<body>
+<!-- 仅样式来源：本文件 body 不参与渲染，报告 HTML 由 walkthrough-report-gen.cjs 拼接生成 -->
+</body>
+</html>

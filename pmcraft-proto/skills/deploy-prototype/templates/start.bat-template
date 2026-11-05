@@ -1,0 +1,28 @@
+@echo off
+cd /d "%~dp0"
+echo ============================================================
+echo   Starting prototype server in background (no window)...
+REM Pass the folder via env var, not inline in the -Command string:
+REM a single quote in the path (C:\Users\O'Brien\...) would truncate the PS single-quoted
+REM string (see setup.cmd) and $ ` in the path would need escaping - env var avoids both.
+REM 5178 is replaced with the final port when deploy-prototype.js renders this template.
+set "PROTO_PORT=5178"
+set "PROTO_DIR=%~dp0"
+powershell -NoProfile -Command "$env:PORT=$env:PROTO_PORT; $d=$env:PROTO_DIR.TrimEnd('\'); Start-Process -FilePath node -ArgumentList 'server.js' -WorkingDirectory $d -WindowStyle Hidden"
+REM wait ~2s for the server to bind. Use ping, not timeout (timeout errors when stdin is redirected)
+ping -n 3 127.0.0.1 >nul
+node -e "require('http').get('http://localhost:5178/',r=>process.exit(0)).on('error',()=>process.exit(1))"
+if errorlevel 1 (
+  echo   [WARN] Server not responding on 5178 - port may be in use or startup failed.
+  echo          Run:  node server.js   in this folder to see the error, then retry.
+  goto end
+)
+echo   [OK] Server is running in the background.
+echo   Share ONE of these LAN links with teammates on the same network:
+node -e "for(const a of Object.values(require('os').networkInterfaces()).flat())if(a.family==='IPv4'&&!a.internal)console.log('      http://'+a.address+':5178/')"
+echo   Local test :  http://localhost:5178/
+echo   Stop       :  double-click close.bat
+echo ------------------------------------------------------------
+echo   You can CLOSE THIS WINDOW now - the server keeps running.
+:end
+pause

@@ -1,0 +1,8 @@
+{
+  "name": "pmcraft-infra",
+  "version": "0.0.1",
+  "description": "产品工坊基础设施插件 — 跨插件通用工具与项目初始化",
+  "author": {
+    "name": "pmcraft"
+  }
+}

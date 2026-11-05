@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# session-start -- inject pmcraft routing brain (CLAUDE.md) into new sessions
+#
+# 钩子由 Claude Code 从插件根 {plugin}/hooks/hooks.json 加载（marketplace 根不加载，
+# 只有带 .claude-plugin/plugin.json 的插件根会被扫描 hooks/hooks.json）。
+# 本文件位于 pmcraft-infra 插件根下，随插件一起被复制到版本化缓存。
+#
+# 定位 CLAUDE.md 的顺序：
+#   1. $CLAUDE_PLUGIN_ROOT（Claude Code 注入的环境变量）→ 插件根/hooks
+#   2. 脚本自身路径上溯：hooks/ 上一级 = 插件根，再上一级 = 市场根（本地路径加载时成立）
+#   3. 缓存布局加载时（~/.claude/plugins/cache/pmcraft/pmcraft-infra/<ver>/hooks）
+#      市场根无法从相对路径推导 → 从 ~/.claude/settings.json
+#      的 extraKnownMarketplaces.pmcraft.source.path 读取市场源路径
+if [ -n "$CLAUDE_PLUGIN_ROOT" ]; then
+  HOOK_DIR="$CLAUDE_PLUGIN_ROOT/hooks"
+else
+  HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+fi
+PLUGIN_ROOT="$(dirname "$HOOK_DIR")"
+MARKET_ROOT="$(dirname "$PLUGIN_ROOT")"
+
+CLAUDE_MD="$MARKET_ROOT/CLAUDE.md"
+if [ ! -f "$CLAUDE_MD" ]; then
+  SETTINGS="${USERPROFILE:-$HOME}/.claude/settings.json"
+  if [ -f "$SETTINGS" ]; then
+    SRC_PATH=$(grep -A3 '"pmcraft"' "$SETTINGS" | grep -m1 '"path"' | sed -E 's/.*"path"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/')
+    if [ -n "$SRC_PATH" ]; then
+      # JSON 双重转义（C:\\dev\\...）→ 先折叠 \\ 为 /，再处理剩余单反斜杠
+      SRC_PATH="${SRC_PATH//\\\\//}"
+      SRC_PATH="${SRC_PATH//\\//}"
+      SRC_PATH="${SRC_PATH%/}"
+      CLAUDE_MD="$SRC_PATH/CLAUDE.md"
+    fi
+  fi
+fi
+
+if [ -f "$CLAUDE_MD" ]; then
+  cat "$CLAUDE_MD"
+else
+  echo "[pmcraft] CLAUDE.md not found at $CLAUDE_MD -- routing brain unavailable"
+fi

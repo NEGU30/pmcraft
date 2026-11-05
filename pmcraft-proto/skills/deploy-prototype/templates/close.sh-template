@@ -1,0 +1,27 @@
+#!/bin/sh
+cd "$(dirname "$0")"
+if [ -f mock/.server.pid ]; then
+  PID=$(cat mock/.server.pid)
+  # validate PID is numeric before using it
+  if echo "$PID" | grep -qE '^[0-9]+$'; then
+    # verify PID belongs to a node process before killing (defense against PID reuse)
+    PROC_NAME=$(ps -o comm= -p "$PID" 2>/dev/null || echo "")
+    if [ -z "$PROC_NAME" ] || ! echo "$PROC_NAME" | grep -qi node; then
+      echo "  [WARN] PID $PID does not belong to a node process (PID may have been reused)."
+      echo "         Not killing this process. If the server IS running, stop it manually."
+      rm -f mock/.server.pid
+    else
+      if kill "$PID" 2>/dev/null; then
+        echo "  [OK] Server stopped (PID $PID)."
+      else
+        echo "  [WARN] Process $PID not running (already stopped or PID reused)."
+      fi
+      rm -f mock/.server.pid
+    fi
+  else
+    echo "  [WARN] Corrupt PID file (non-numeric: $PID). Deleting it."
+    rm -f mock/.server.pid
+  fi
+else
+  echo "  No running server found."
+fi

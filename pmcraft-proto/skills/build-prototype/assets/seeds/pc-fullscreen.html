@@ -1,0 +1,166 @@
+<!doctype html>
+<!--
+  proto-builder 种子模板 — PC-全屏网页
+
+  平台：PC 浏览器全屏网页
+  Chrome：侧边栏 (240px) + 顶部栏 (56px) + 内容区
+  布局范式：管理后台 / SaaS 工作台
+  引入：@import url('../_common.css') — 通用组件样式（运行时位于 prototype/working/_common.css）
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>[REPLACE] Page Title</title>
+  <link rel="stylesheet" href="../design-system.css" />
+  <style>
+    /* ═══ 平台 Chrome ═══
+       通用组件样式来自 _common.css（运行时位于 prototype/working/_common.css）。
+       本文件只定义：侧边栏、顶部栏、内容区布局。
+       变量来源：prototype/working/design-system.css 的 :root 块。 */
+    @import url('../_common.css');
+
+    /* ── App Shell ────────────────────────────────────────────────────── */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ──────────────────────────────────────────────────────── */
+    .sidebar {
+      width: 240px; min-width: 240px;
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      display: flex; flex-direction: column;
+      overflow-y: auto;
+    }
+    .sidebar-brand {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 20px; height: 56px;
+      font-family: var(--font-heading, inherit);
+      font-size: 17px; font-weight: 700;
+      letter-spacing: -0.01em;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .sidebar-brand .brand-icon {
+      width: 24px; height: 24px;
+      background: var(--color-primary);
+      border-radius: var(--radius-md, 6px);
+      display: grid; place-items: center;
+      color: #fff; font-size: 13px;
+    }
+    .sidebar-nav { flex: 1; padding: 8px 0; }
+    .sidebar-section {
+      padding: 12px 20px 4px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--color-text-secondary, var(--color-text));
+    }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 20px; margin: 1px 8px; border-radius: var(--radius-md, 6px);
+      font-size: 14px; font-weight: 500;
+      color: var(--color-text-secondary, var(--color-text));
+      cursor: pointer; transition: background 0.1s ease, color 0.1s ease;
+      text-decoration: none;
+    }
+    .sidebar-item:hover { background: color-mix(in oklch, var(--color-text) 5%, transparent); color: var(--color-text); }
+    .sidebar-item.active {
+      background: color-mix(in oklch, var(--color-primary) 12%, transparent);
+      color: var(--color-primary); font-weight: 600;
+    }
+    .sidebar-item .item-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    .sidebar-item .item-badge { margin-left: auto; }
+
+    /* ── Main Area ────────────────────────────────────────────────────── */
+    .main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    /* ── Topbar ───────────────────────────────────────────────────────── */
+    .topbar {
+      height: 56px; min-height: 56px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      display: flex; align-items: center;
+      padding: 0 24px; gap: var(--space-md, 16px);
+    }
+    .topbar-breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--color-text-secondary, var(--color-text));
+    }
+    .topbar-breadcrumb a { color: var(--color-text-secondary, var(--color-text)); }
+    .topbar-breadcrumb a:hover { color: var(--color-primary); }
+    .topbar-breadcrumb .sep { color: var(--color-border); }
+    .topbar-breadcrumb .current { color: var(--color-text); font-weight: 600; }
+    .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: var(--space-sm, 8px); }
+    .topbar-actions .btn-icon {
+      width: 36px; height: 36px;
+      display: grid; place-items: center;
+      border-radius: var(--radius-md, 6px);
+      background: none; border: 0; cursor: pointer;
+      color: var(--color-text-secondary, var(--color-text));
+    }
+    .topbar-actions .btn-icon:hover {
+      background: color-mix(in oklch, var(--color-text) 6%, transparent);
+    }
+
+    /* ── Content ──────────────────────────────────────────────────────── */
+    .content {
+      flex: 1; overflow-y: auto;
+      padding: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar" data-pb-id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">[R]</div>
+        <span>[REPLACE] Brand</span>
+      </div>
+      <nav class="sidebar-nav">
+        <!-- PASTE SIDEBAR ITEMS from page-inventory.md -->
+        <div class="sidebar-section">[REPLACE] 导航分组</div>
+        <a class="sidebar-item active" href="#">
+          <svg class="icon icon-md item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span>[REPLACE] 仪表盘</span>
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg class="icon icon-md item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg>
+          <span>[REPLACE] 列表项</span>
+          <span class="badge badge-info item-badge">3</span>
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg class="icon icon-md item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>[REPLACE] 设置</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ═══ MAIN ═══ -->
+    <div class="main-area">
+      <header class="topbar" data-pb-id="topbar">
+        <div class="topbar-breadcrumb">
+          <a href="#">[REPLACE] 首页</a>
+          <span class="sep">/</span>
+          <span class="current">[REPLACE] 当前页</span>
+        </div>
+        <div class="topbar-actions">
+          <button type="button" class="btn-icon" title="搜索"><svg class="icon icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button>
+          <button type="button" class="btn-icon" title="通知"><svg class="icon icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></button>
+          <button type="button" class="btn btn-sm btn-primary">[REPLACE] 新建</button>
+        </div>
+      </header>
+
+      <main class="content" data-pb-id="content">
+        <!-- ═══════════════════════════════════════════════════════════
+             PASTE LAYOUTS FROM references/layouts/pc-fullscreen-layouts.md HERE.
+             Each layout block is a self-contained chunk — paste, then
+             replace [REPLACE] markers with content from page-inventory.md.
+             ═══════════════════════════════════════════════════════════ -->
+      </main>
+    </div>
+  </div>
+
+</body>
+</html>

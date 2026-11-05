@@ -1,0 +1,15 @@
+@echo off
+title Remove prototype port 5178 rule
+netsh advfirewall firewall delete rule name="PmLab-LAN-5178"
+if %errorlevel% neq 0 goto failed
+echo.
+echo   [OK] Firewall rule for port 5178 removed.
+echo.
+goto end
+:failed
+echo.
+echo   [FAILED] Could not remove the rule.
+echo   Either this window is not administrator, or the rule was not present.
+echo.
+:end
+pause

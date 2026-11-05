@@ -1,0 +1,8 @@
+{
+  "name": "pmcraft-coach",
+  "version": "0.0.1",
+  "description": "产品经理思维训练插件 — 思维训练（thinking-coach 结构化追问）+ 概念讲解（concept-coach 白话类比 + 可视化 HTML 概念卡）+ 方案拷问（grilling-coach 设计树拍板）",
+  "author": {
+    "name": "pmcraft"
+  }
+}

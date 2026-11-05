@@ -1,0 +1,31 @@
+:root {
+  /* 颜色 */
+  --color-primary: {primary_hex};
+  --color-accent: {accent_hex};
+  --color-background: {background_hex};
+  --color-surface: {surface_hex};
+  --color-text: {text_hex};
+  --color-border: {border_hex};
+  --color-danger: {danger_hex};
+  --color-success: {success_hex};
+  --color-warning: {warning_hex};
+
+  /* 字体 */
+  --font-heading: '{heading_font}', sans-serif;
+  --font-body: '{body_font}', sans-serif;
+
+  /* 间距 */
+  --space-sm: 4px;
+  --space-md: 8px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+
+  /* 圆角 */
+  --radius-sm: {radius_sm}px;
+  --radius-md: {radius_md}px;
+  --radius-lg: {radius_lg}px;
+
+  /* 阴影 */
+  --shadow-md: 0 1px 3px rgba(0,0,0,0.1);
+}

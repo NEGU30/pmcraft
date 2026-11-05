@@ -1,0 +1,152 @@
+/* ═══════════════════════════════════════════════════════════════════════
+ * pmcraft 原型标注层 · 运行时样式（annotations.css）
+ * ----------------------------------------------------------------------
+ * 由 annotate-prototype 复制到 prototype/working/ 根目录，页面 head 注入
+ * <link href="../annotations.css"> 引用。
+ *
+ * 设计约定：
+ * - 全部 class 使用 pm-anno- 前缀命名空间，独立资产，不受
+ *   "禁止发明新的全局 CSS class" 约束（build-prototype 豁免条款）
+ * - 颜色取 CSS 变量 + 固定值双轨：设计系统变量优先，缺失用 fallback
+ * - 标注 DOM 全部运行时注入，本文件只作用于标注层，不影响页面本体
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 悬浮开关（双按钮垂直堆叠：规则/状态在下 16px，流程在上 68px；演示开关另在其上，见 demo-panel.css） ── */
+.pm-anno-toggle {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000000;
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--color-border, #E3E5EE);
+  border-radius: 22px;
+  background: var(--color-surface, #FFFFFF);
+  color: var(--color-text-secondary, #6B6F80);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+.pm-anno-toggle.on {
+  border-color: var(--color-primary, #4F6BFF);
+  color: var(--color-primary, #4F6BFF);
+}
+/* 流程开关在上层：与 .pm-anno-toggle 基础样式共用，仅改底部偏移 */
+.pm-anno-toggle-top { bottom: 68px; }
+
+/* ── 叠加层（仅标注开启时注入） ────────────────────────────────────── */
+.pm-anno-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  pointer-events: none;
+  display: none;
+}
+
+/* ── 徽章（编号角标） ─────────────────────────────────────────────────
+ * 20px 高胶囊、无边框、柔和阴影；纯色分类型：
+ *   规则 = 主色底白字（与页面主按钮同色系）
+ *   状态 = 深灰底白字
+ *   流程 = 紫底白字
+ *   聚合 = 炭黑底白字（同锚多条标注的数字徽章）
+ * 字号 10px / 字重 600 / line-height:1 / padding 6px，留白充足不撑
+ */
+.pm-anno-dot {
+  position: fixed;
+  pointer-events: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--color-primary, #4F6BFF);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
+  z-index: 999999;
+  border: none;
+}
+.pm-anno-dot.state { background: #5A5E6B; }
+.pm-anno-dot.flow  { background: #8B5CF6; }
+.pm-anno-dot.agg   { background: #1C1E2A; min-width: 20px; }
+
+/* ── 气泡（实线白底：白底 + 1.5px 深边框 + 阴影，与页面白卡片区分） ── */
+.pm-anno-bubble {
+  position: fixed;
+  z-index: 1000000;
+  width: 280px;
+  max-width: calc(100vw - 32px);
+  max-height: 70vh;
+  overflow-y: auto;
+  background: #fff;
+  border: 1.5px solid #C9CDE0;
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--color-text, #1C1E2A);
+  font-family: inherit;
+  line-height: 1.6;
+}
+.pm-anno-b-head {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--color-primary, #4F6BFF);
+}
+.pm-anno-b-text { line-height: 1.7; }
+.pm-anno-b-link {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #E4E7F0;
+  color: var(--color-primary, #4F6BFF);
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.pm-anno-b-link:hover { text-decoration: underline; }
+.pm-anno-steps {
+  margin: 0 0 4px 18px;
+  padding: 0;
+  line-height: 1.8;
+}
+.pm-anno-sec {
+  font-weight: 700;
+  margin: 8px 0 4px;
+  font-size: 12px;
+  color: var(--color-text-secondary, #6B6F80);
+}
+.pm-anno-exits { margin: 0 0 0 18px; padding: 0; line-height: 1.8; }
+.pm-anno-exits li::marker { content: '▸ '; }
+.pm-anno-note {
+  font-size: 12px;
+  color: var(--color-warning, #F5A524);
+  margin-top: 8px;
+}
+.pm-anno-prd {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #E3E5EE;
+  font-size: 12px;
+  color: var(--color-text-secondary, #6B6F80);
+  line-height: 1.6;
+}
+
+/* ── 聚合列表 ───────────────────────────────────────────────────────── */
+.pm-anno-li {
+  padding: 7px 4px;
+  /* 固定浅灰：避免页面 --color-border 覆盖后与气泡边框 #C9CDE0 色系不一致（与 demo 面板分割线同款约定） */
+  border-bottom: 1px solid #E3E5EE;
+  cursor: pointer;
+  font-size: 13px;
+}
+.pm-anno-li:last-child { border-bottom: none; }
+.pm-anno-li:hover { color: var(--color-primary, #4F6BFF); }

@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd /c \"%CLAUDE_PLUGIN_ROOT%\\hooks\\run-hook.cmd\" session-start"
+          }
+        ]
+      },
+      {
+        "matcher": "startup|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd /c \"%CLAUDE_PLUGIN_ROOT%\\hooks\\run-hook.cmd\" guard-session-reset"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "pmcraft-dev",
+  "version": "0.0.1",
+  "description": "开发交接插件 — 读取 PM 产出，输出预加工文件供 OpenSpec 消费",
+  "author": {
+    "name": "pmcraft"
+  }
+}

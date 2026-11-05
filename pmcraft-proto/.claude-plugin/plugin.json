@@ -1,0 +1,8 @@
+{
+  "name": "pmcraft-proto",
+  "version": "0.0.1",
+  "description": "原型设计插件 — 从结构初始化到部署的完整原型流水线",
+  "author": {
+    "name": "pmcraft"
+  }
+}

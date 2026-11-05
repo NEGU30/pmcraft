@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>结果后台 · pmcraft 问卷调研</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232C6E8F'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --color-primary:#2C6E8F; --color-primary-hover:#235A76; --color-primary-soft:#EAF2F6;
+    --color-background:#F4F6F5; --color-surface:#FDFEFE; --color-text:#26323F;
+    --color-text-muted:#5B6B78; --color-text-placeholder:#9AA7B0; --color-border:#DCE3E4;
+    --color-danger:#C1554F; --color-success:#2F855A; --color-warning:#C0872E;
+    --font-heading:'Sora','Noto Sans SC',sans-serif; --font-body:'Noto Sans SC','Sora',system-ui,sans-serif;
+    --radius-md:8px; --radius-lg:12px; --shadow-sm:0 1px 2px rgba(38,50,63,.06); --shadow-md:0 2px 8px rgba(38,50,63,.08); --shadow-lg:0 8px 24px rgba(38,50,63,.10);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--color-background);color:var(--color-text);font-family:var(--font-body);line-height:1.6;}
+  header.top{background:var(--color-surface);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:50;}
+  .top-inner{max-width:1080px;margin:0 auto;padding:16px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+  .h-title{font-family:var(--font-heading);font-weight:700;font-size:1.15rem;}
+  .h-title small{color:var(--color-text-muted);font-weight:400;font-size:.82rem;margin-left:8px;}
+  .h-actions{display:flex;gap:10px;}
+  .btn{font-family:var(--font-body);font-weight:500;font-size:.9rem;border-radius:var(--radius-md);
+    padding:9px 18px;border:1px solid transparent;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-block;}
+  .btn-primary{background:var(--color-primary);color:#fff;}
+  .btn-primary:hover{background:var(--color-primary-hover);}
+  .btn-secondary{background:transparent;color:var(--color-primary);border:1px solid var(--color-primary);}
+  .btn-secondary:hover{background:var(--color-primary-soft);}
+  .btn-danger{background:transparent;color:var(--color-danger);border:1px solid var(--color-danger);}
+  .btn-danger:hover{background:#F7E7E6;} .btn-lg{padding:14px 40px;font-size:1.05rem;}
+
+  main{max-width:1080px;margin:0 auto;padding:28px 28px 80px;}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px;}
+  .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);
+    padding:18px 20px;box-shadow:var(--shadow-sm);}
+  .card .lbl{font-size:.85rem;color:var(--color-text-muted);margin-bottom:8px;}
+  .card .val{font-family:var(--font-heading);font-weight:700;font-size:2rem;line-height:1;}
+  .card .val small{font-size:.9rem;font-weight:400;color:var(--color-text-muted);margin-left:4px;}
+  .card.nps .val{color:var(--color-primary);}
+  .dup-banner{background:#F6EEDD;color:#7a5b12;border:1px solid #E7D9B8;border-radius:var(--radius-lg);
+    padding:12px 16px;margin-bottom:20px;font-size:.9rem;line-height:1.6;}
+  .card .sub-note{font-size:.78rem;color:var(--color-text-muted);margin-top:6px;}
+  .settings{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:24px;box-shadow:var(--shadow-sm);}
+  .settings .st{font-family:var(--font-heading);font-weight:600;font-size:1rem;margin:0 0 10px;}
+  .settings .st span{font-weight:400;font-size:.8rem;color:var(--color-text-muted);margin-left:8px;}
+  .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  .settings label{font-size:.88rem;color:var(--color-text-muted);display:grid;gap:4px;}
+  .settings .dt-local{width:100%;padding:8px 10px;border:1px solid var(--color-border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:.95rem;color:var(--color-text);background:var(--color-surface);}
+  .settings-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .checkbox-label{display:flex!important;flex-direction:row!important;align-items:center;gap:8px;cursor:pointer;}
+  .checkbox-label input[type=checkbox]{width:18px;height:18px;cursor:pointer;}
+  .checkbox-label .hint{font-size:.78rem;opacity:.7;}
+
+  /* 登录页 */
+  .login-overlay{position:fixed;inset:0;background:var(--color-background);z-index:9999;display:flex;align-items:center;justify-content:center;}
+  .login-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:48px 40px 36px;width:380px;max-width:92vw;box-shadow:var(--shadow-lg);text-align:center;}
+  .login-card h2{font-family:var(--font-heading);font-weight:700;font-size:1.2rem;margin:0 0 6px;}
+  .login-card p{color:var(--color-text-muted);font-size:.88rem;margin:0 0 24px;}
+  .login-card .pw-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+  .login-card .pw-wrap input{font-family:var(--font-body);font-size:1.2rem;padding:12px 16px;border:1px solid var(--color-border);border-radius:var(--radius-md);text-align:center;letter-spacing:4px;color:var(--color-text);background:var(--color-surface);}
+  .login-card .pw-wrap input:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-primary-soft);outline:none;}
+  .login-card .login-err{color:var(--color-danger);font-size:.85rem;margin-top:-12px;margin-bottom:12px;display:none;}
+  .login-hide{display:none!important;}
+  .logout-btn{cursor:pointer;font-size:.8rem;color:var(--color-text-muted);margin-left:12px;text-decoration:underline;}
+
+  .sec-title{font-family:var(--font-heading);font-weight:600;font-size:1.15rem;margin:34px 0 16px;
+    padding-bottom:8px;border-bottom:2px solid var(--color-border);}
+  .qblock{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);
+    padding:18px 22px;margin-bottom:16px;box-shadow:var(--shadow-sm);}
+  .qblock h3{font-size:1rem;font-weight:600;margin:0 0 4px;}
+  .qblock .qmeta{font-size:.8rem;color:var(--color-text-muted);margin-bottom:14px;}
+  .bar-row{display:grid;grid-template-columns:minmax(120px,260px) 1fr 54px;gap:12px;align-items:center;margin-bottom:8px;}
+  .bar-lbl{font-size:.88rem;color:var(--color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .bar-track{background:var(--color-background);border-radius:999px;height:20px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--color-primary);border-radius:999px;min-width:2px;transition:width .4s;}
+  .bar-fill.soft{background:#9BBAC9;}
+  .bar-num{font-size:.85rem;color:var(--color-text-muted);text-align:right;}
+  .txt-list{margin:0;padding:0;list-style:none;}
+  .txt-list li{padding:10px 12px;border:1px solid var(--color-border);border-radius:var(--radius-md);margin-bottom:8px;font-size:.92rem;}
+  .txt-list li .who{color:var(--color-primary);font-weight:500;margin-right:8px;}
+  .txt-empty{color:var(--color-text-placeholder);font-size:.9rem;}
+
+  table.layer{width:100%;border-collapse:collapse;background:var(--color-surface);border:1px solid var(--color-border);
+    border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);}
+  table.layer th,table.layer td{padding:11px 14px;text-align:center;border-bottom:1px solid var(--color-border);font-size:.9rem;}
+  table.layer th{background:var(--color-primary-soft);color:var(--color-primary-hover);font-weight:600;}
+  table.layer td:first-child,table.layer th:first-child{text-align:left;}
+  table.layer tr:last-child td{border-bottom:none;}
+
+  .empty{text-align:center;padding:70px 20px;color:var(--color-text-muted);}
+  .empty .big{font-size:44px;margin-bottom:14px;}
+  .empty code{background:var(--color-primary-soft);color:var(--color-primary-hover);padding:2px 7px;border-radius:5px;}
+  .loading{text-align:center;padding:60px;color:var(--color-text-muted);}
+</style>
+</head>
+<body>
+<div id="adminContent">
+<header class="top">
+  <div class="top-inner">
+    <div class="h-title">结果后台 <small>pmcraft 问卷调研 <span class="logout-btn" onclick="logout()">退出登录</span></small></div>
+    <div class="h-actions">
+      <button class="btn btn-secondary" onclick="load()">刷新</button>
+      <a class="btn btn-primary" href="/api/export.md">导出 MD 表格</a>
+      <button class="btn btn-danger" onclick="clearData()">清空数据</button>
+    </div>
+  </div>
+</header>
+</div>
+
+<!-- login overlay (outside adminContent) -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <h2>结果后台</h2>
+    <p>pmcraft 问卷调研</p>
+    <div class="pw-wrap">
+      <input type="password" id="loginPw" placeholder="请输入密码" maxlength="6" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-err" id="loginErr">密码错误，请重新输入</div>
+    <button class="btn btn-primary btn-lg" onclick="doLogin()" style="width:100%">登录</button>
+  </div>
+</div>
+
+<div class="content-area">
+<div class="top-inner" style="max-width:1080px;margin:0 auto;padding:12px 28px 0;">
+  <div class="settings" id="settingsPanel">
+    <div class="st">问卷设置 <span id="settingsStatus"></span></div>
+    <div class="settings-grid">
+      <label>开放时间
+        <input type="datetime-local" id="settingsStart" class="dt-local">
+      </label>
+      <label>截止时间
+        <input type="datetime-local" id="settingsEnd" class="dt-local">
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" id="settingsAllowMulti" onchange="onAllowMultiChange()">
+        <span>允许重复提交 <span class="hint">（关闭时同一工号只能提交一次）</span></span>
+      </label>
+    </div>
+    <div class="settings-actions">
+      <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
+      <button class="btn btn-secondary" onclick="clearSettings()">清空时间限制（一直开放）</button>
+      <span id="settingsMsg" style="font-size:.85rem;color:var(--color-text-muted);"></span>
+    </div>
+  </div>
+</div>
+
+<main id="main"><div class="loading">正在加载数据…</div></main>
+</div>
+
+<script>
+/* ---------- 题目元信息（从 survey.json 加载） ---------- */
+var QDEF = [];
+var QMAP = {};            // 题干索引：id → {t, options, rows, cols}（取自 cfg.boards，供分布/矩阵/分层取选项）
+var SEGMENT = null;       // 分层配置：survey.json 顶层可选 segmentBy:{id,label}，缺省不展示分层表
+var SKILLS_MAP = {};
+var SURVEY_TITLE = '结果后台';
+
+/* ---------- 加载配置 + 取数 ---------- */
+async function loadConfig(){
+  try{ var cfg = await (await fetch('/api/survey.json')).json();
+    if(cfg.title) SURVEY_TITLE = cfg.title;
+    document.querySelector('.h-title small').innerHTML = cfg.title + ' <span class="logout-btn" onclick="logout()">退出登录</span>';
+    if(cfg.boards){ cfg.boards.forEach(function(b){ (b.questions||[]).forEach(function(q){ QMAP[q.id]={t:q.type, options:q.options||null, rows:q.rows||null, cols:q.cols||null}; }); }); }
+    if(cfg.segmentBy && cfg.segmentBy.id) SEGMENT = cfg.segmentBy;
+    if(cfg.adminQdef) QDEF = cfg.adminQdef.map(function(q){
+      // 归一化字段名：支持 survey.json 的 "type" 和旧版 "t"
+      q.t = q.t || q.type;
+      // 转换 opts 格式 {v:label} → [{v,l}]
+      if(q.opts){ q.opts = Object.keys(q.opts).map(function(v){return {v:v, l:q.opts[v]};}); }
+      // 从题干补齐选项与矩阵结构（单选/多选/矩阵题据此出真实分布）
+      var src = QMAP[q.id];
+      if(src){
+        if(!q.opts && src.options) q.opts = src.options.map(function(o){return {v:o.v, l:o.label};});
+        if(!q.matrix && src.t==='matrix' && src.rows && src.cols) q.matrix = {rows:src.rows, cols:src.cols};
+      }
+      return q;
+    });
+    if(cfg.skills) SKILLS_MAP = cfg.skills;
+  }catch(e){}
+}
+async function load(){
+  const main = document.getElementById('main');
+  main.innerHTML = '<div class="loading">正在加载数据…</div>';
+  await loadConfig();
+  let data = [];
+  try { data = await (await fetch('/api/responses.json',{cache:'no-store'})).json(); }
+  catch(e){ main.innerHTML = '<div class="empty"><div class="big">🔌</div><p>读取数据失败，请确认服务正在运行。</p></div>'; return; }
+  render(data);
+}
+
+/* ---------- 清空数据（先导出备份，再服务端归档+清空）---------- */
+async function clearData(){
+  let data = [];
+  try { data = await (await fetch('/api/responses.json',{cache:'no-store'})).json(); } catch(e){}
+  if(!Array.isArray(data) || !data.length){ alert('当前没有数据可清空。'); return; }
+  if(!confirm('确定清空当前 ' + data.length + ' 份数据吗？\n\n清空前会：\n1) 自动下载一份 CSV 备份到你本地\n2) 服务端归档一份备份（可从 mock/archive/ 恢复）\n\n清空后，问卷填写页将从零开始收集。')) return;
+  // 1) 先导出（await blob，确保拿到的是清空前的数据，避免与清空竞态）
+  try {
+    const blob = await (await fetch('/api/export.csv')).blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'prp-survey-backup.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  } catch(e){
+    if(!confirm('本地 CSV 下载失败。服务端仍会归档备份，是否继续清空？')) return;
+  }
+  // 2) 服务端归档 + 清空
+  let res;
+  try { res = await (await fetch('/api/clear',{method:'POST'})).json(); }
+  catch(e){ alert('清空失败：服务未响应。'); return; }
+  if(res && res.ok){
+    alert('已清空 ' + res.count + ' 份。\n服务端备份：' + (res.archive || '（无数据）'));
+    load();
+  } else {
+    alert('清空失败：' + ((res && res.error) || '未知错误'));
+  }
+}
+
+function pct(n,d){ return d? Math.round(n/d*100):0; }
+
+function render(all){
+  const main = document.getElementById('main');
+  if(!all.length){
+    main.innerHTML = `<div class="empty"><div class="big">📭</div>
+      <p>还没有回收到任何答卷。</p>
+      <p>把 <code>http://localhost:5178/</code> 发给填写者，提交后回到这里点“刷新”即可看到汇总。</p></div>`;
+    return;
+  }
+  const kept = all.filter(r => r._kept);          // 去重后（每昵称最新一份 + 全部终止记录）
+  const done = kept.filter(r=>r.completed && !r.terminated);
+  const term = kept.filter(r=>r.terminated);
+  // ATT
+  const attAll = kept.filter(r=>r.attention);
+  const attPass = attAll.filter(r=>r.attention.passed).length;
+  // NPS 类题目（adminQdef 中 nps:true 的 0-10 量表，如各产品推荐分；可多题并存）
+  const npsQs = QDEF.filter(q=>q.nps && q.t==='scale');
+
+  // 重复昵称（基于原始全量统计）
+  const dupMap = {};
+  all.forEach(r=>{ const nk=(r.nickname||'').trim(); if(nk) dupMap[nk]=(dupMap[nk]||0)+1; });
+  const dups = Object.entries(dupMap).filter(e=>e[1]>1);
+
+  let html = '';
+  if(dups.length){
+    html += `<div class="dup-banner">⚠️ ${dups.length} 个昵称重复提交：${dups.map(e=>escapeHtml(e[0])+' ×'+e[1]).join('、')}。下方统计与卡片已按昵称去重（保留最新一份）；原始行可在导出 CSV 的「是否采纳」列查看。</div>`;
+  }
+
+  // 概览卡：回收/完成/终止/注意力 + 每套 NPS 产品一张卡（无 nps 题则不出现）
+  html += `<div class="cards">
+    <div class="card"><div class="lbl">总回收${dups.length?'（去重后）':''}</div><div class="val">${kept.length}<small>${dups.length?'人':'份'}</small></div>${all.length!==kept.length?`<div class="sub-note">原始 ${all.length} 行</div>`:''}</div>
+    <div class="card"><div class="lbl">有效完成</div><div class="val">${done.length}<small>份</small></div></div>
+    <div class="card"><div class="lbl">筛选终止（未用过）</div><div class="val">${term.length}<small>份</small></div></div>
+    <div class="card"><div class="lbl">注意力检测通过率</div><div class="val">${attAll.length?pct(attPass,attAll.length):'—'}<small>%（${attPass}/${attAll.length}）</small></div></div>` +
+    npsQs.map(function(q){ const n = computeNPS(done, q.id); return `<div class="card nps"><div class="lbl">${escapeHtml(q.title)}${q.title.indexOf('NPS')<0?' NPS':''}</div><div class="val">${n.n?n.score:'—'}<small>（推 ${n.p} · 中 ${n.pa} · 贬 ${n.d}）</small></div></div>`; }).join('') +
+  `</div>`;
+
+  // 逐题分布（按题型渲染：矩阵/0-10 量表/单选多选/排序/开放题）
+  html += `<div class="sec-title">逐题分布</div>`;
+  QDEF.forEach(q=>{
+    if(q.matrix){ html += matrixBlock(q, kept); return; }
+    if(q.id==='ATT' || q.t==='scale'){ html += scaleBlock(q, kept); return; }
+    if(q.t==='text' || q.t==='textarea'){ html += textBlock(q, kept); return; }
+    if(q.t==='likert5'||q.t==='likert7'){ html += likertBlock(q, kept); return; }
+    if(q.t==='rank'){ html += rankBlock(q, kept); return; }
+    html += distBlock(q, kept);
+  });
+
+  // 分层对比（survey.json 顶层 segmentBy 指定分层题；按层拆各产品 NPS）
+  if(SEGMENT){ html += segmentTable(done); }
+
+  main.innerHTML = html;
+}
+
+function computeNPS(rows, qid){
+  qid = qid || 'Q10';
+  const vals = (rows||[]).map(r=>{ const v = r.answers ? r.answers[qid] : undefined; return (typeof v==='number' && v>=0 && v<=10) ? v : null; }).filter(v=>v!==null);
+  const p = vals.filter(v=>v>=9).length, d = vals.filter(v=>v<=6).length, pa = vals.filter(v=>v>=7&&v<=8).length;
+  const n = vals.length;
+  return { n, p, d, pa, score: n? Math.round((p-d)/n*100):0 };
+}
+
+function distBlock(q, all){
+  // 计数
+  const counts = {}; let base = 0;
+  const optDefs = q.skills ? Object.keys(SKILLS_MAP).map(function(v){return {v:v,l:SKILLS_MAP[v]};}) : q.opts;
+  if(!optDefs) return '<div class="qblock"><h3>'+q.title+'</h3><div class="qmeta">⚠ 未知题型（'+ (q.t||'?') +'），暂无法统计分布。</div></div>';
+  optDefs.forEach(o=>counts[o.v]=0);
+  all.forEach(r=>{
+    const v = r.answers ? r.answers[q.id] : undefined;
+    if(v===undefined || v===null) return;
+    base++;
+    if(q.t==='multi'){ (Array.isArray(v)?v:[]).forEach(x=>{ if(counts[x]===undefined) counts[x]=0; counts[x]++; }); }
+    else { if(counts[v]===undefined) counts[v]=0; counts[v]++; }
+  });
+  const max = Math.max(1, ...Object.values(counts));
+  let rows = optDefs.map(o=>({l:`${o.v==='__other__'?'':o.v+'. '}${o.l}`, c:counts[o.v]||0}));
+  if(q.skills) rows.sort((a,b)=>b.c-a.c); // 技能类按热度排
+  const bars = rows.map(r=>`<div class="bar-row">
+      <div class="bar-lbl" title="${r.l}">${r.l}</div>
+      <div class="bar-track"><div class="bar-fill ${q.t==='multi'?'soft':''}" style="width:${r.c/max*100}%"></div></div>
+      <div class="bar-num">${r.c}</div></div>`).join('');
+  return `<div class="qblock"><h3>${q.title}</h3>
+    <div class="qmeta">${q.t==='multi'?'多选':'单选'} · 有效作答 ${base} 份</div>${bars}</div>`;
+}
+
+/* 排序题分布：答案 = 有序数组（顺序即排名）；按位加权 Top1=3/Top2=2/Top3=1 计每选项得分，降序条形图 */
+function rankBlock(q, all){
+  const W = [3,2,1];
+  const optDefs = q.opts;
+  if(!optDefs) return '<div class="qblock"><h3>'+q.title+'</h3><div class="qmeta">⚠ 排序题缺少选项定义（options），暂无法统计。</div></div>';
+  const scores = {}; let base = 0;
+  optDefs.forEach(o=>scores[o.v]=0);
+  all.forEach(r=>{
+    const v = r.answers ? r.answers[q.id] : undefined;
+    if(!Array.isArray(v) || !v.length) return;
+    base++;
+    v.forEach((x,i)=>{ if(scores[x]===undefined) scores[x]=0; scores[x] += (i<W.length?W[i]:1); });
+  });
+  const max = Math.max(1, ...Object.values(scores));
+  const rows = optDefs.map(o=>({v:o.v, l:o.l, s:scores[o.v]||0}))
+    .sort((a,b)=>b.s-a.s);
+  const bars = rows.map(r=>`<div class="bar-row">
+      <div class="bar-lbl" title="${r.l}">${r.v}. ${r.l}</div>
+      <div class="bar-track"><div class="bar-fill soft" style="width:${r.s/max*100}%"></div></div>
+      <div class="bar-num">${r.s} 分</div></div>`).join('');
+  return `<div class="qblock"><h3>${escapeHtml(q.title)}</h3>
+    <div class="qmeta">排序加权（Top1=3/Top2=2/Top3=1） · 有效作答 ${base} 份</div>${bars}</div>`;
+}
+
+function scaleBlock(q, all){
+  const counts = new Array(11).fill(0); let base=0;
+  all.forEach(r=>{
+    let v;
+    if(q.id==='ATT'){ v = r.attention? r.attention.value : undefined; }
+    else { v = r.answers? r.answers[q.id] : undefined; }
+    if(typeof v==='number' && v>=0 && v<=10){ counts[v]++; base++; }
+  });
+  const max = Math.max(1, ...counts);
+  const bars = counts.map((c,i)=>`<div class="bar-row">
+      <div class="bar-lbl">${i}${q.id==='ATT'&&i===7?'（正确）':''}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${c/max*100}%;${q.id==='ATT'&&i===7?'background:var(--color-success)':''}"></div></div>
+      <div class="bar-num">${c}</div></div>`).join('');
+  let extra = '';
+  if(q.nps){ const n=computeNPS(all.filter(r=>r.completed&&!r.terminated), q.id); extra = n.n ? ` · NPS ${n.score}（推 ${n.p} · 中 ${n.pa} · 贬 ${n.d}）` : ' · NPS —'; }
+  return `<div class="qblock"><h3>${q.title}</h3><div class="qmeta">0–10 量表 · 有效作答 ${base} 份${extra}</div>${bars}</div>`;
+}
+
+function likertBlock(q, all){
+  const is7 = q.t==='likert7';
+  const defs = is7 ? ['非常不同意','不同意','比较不同意','一般','比较同意','同意','非常同意'] : ['非常不同意','不同意','一般','同意','非常同意'];
+  const labels = q.labels || defs;
+  const n = labels.length;
+  const counts = new Array(n+1).fill(0); let base=0;
+  all.forEach(r=>{
+    const v = r.answers ? r.answers[q.id] : undefined;
+    if(typeof v==='number' && v>=1 && v<=n){ counts[v]++; base++; }
+  });
+  const max = Math.max(1, ...counts.slice(1));
+  const bars = labels.map((lbl,i)=>{
+    const c = counts[i+1]||0;
+    return '<div class="bar-row"><div class="bar-lbl" title="'+escapeHtml(lbl)+'">'+escapeHtml(lbl)+'</div><div class="bar-track"><div class="bar-fill" style="width:'+(c/max*100)+'%"></div></div><div class="bar-num">'+c+'</div></div>';
+  }).join('');
+  return '<div class="qblock"><h3>'+q.title+'</h3><div class="qmeta">'+(is7?'7':'5')+'点量表 · 有效作答 '+base+' 份</div>'+bars+'</div>';
+}
+
+function textBlock(q, all){
+  const items = all.map(r=>({who:r.nickname||'匿名', txt:r.answers?r.answers[q.id]:''}))
+    .filter(x=>x.txt && String(x.txt).trim());
+  const body = items.length
+    ? `<ul class="txt-list">${items.map(x=>`<li><span class="who">${escapeHtml(x.who)}</span>${escapeHtml(x.txt)}</li>`).join('')}</ul>`
+    : `<div class="txt-empty">暂无填写。</div>`;
+  return `<div class="qblock"><h3>${q.title}</h3><div class="qmeta">开放题 · ${items.length} 条填写</div>${body}</div>`;
+}
+
+/* 矩阵题分布：每行一个可选列，输出 行×列 计数表 */
+function matrixBlock(q, all){
+  const rows = q.matrix.rows, cols = q.matrix.cols;
+  const per = {}; const rowBase = {};
+  all.forEach(r=>{
+    const v = r.answers ? r.answers[q.id] : undefined;
+    if(!v || typeof v!=='object') return;
+    rows.forEach(row=>{
+      if(v[row]!==undefined && v[row]!==null && v[row]>=0 && v[row]<cols.length){
+        const c = v[row];
+        (per[row]=per[row]||{})[c]=(per[row][c]||0)+1;
+        rowBase[row]=(rowBase[row]||0)+1;
+      }
+    });
+  });
+  const head = `<tr><th></th>${cols.map(c=>`<th>${escapeHtml(c)}</th>`).join('')}<th>有效行</th></tr>`;
+  const body = rows.map(row=>`<tr><td>${escapeHtml(row)}</td>` +
+    cols.map((c,ci)=>`<td>${(per[row]&&per[row][ci])||0}</td>`).join('') +
+    `<td>${rowBase[row]||0}</td></tr>`).join('');
+  return `<div class="qblock"><h3>${escapeHtml(q.title)}</h3><div class="qmeta">矩阵 · 每行单选</div><table class="layer">${head}${body}</table></div>`;
+}
+
+/* 分层对比：按 segmentBy 题（如从业年限）分组，每组展示样本数与各 NPS 产品的推荐分 */
+function segmentTable(done){
+  const npsQs = QDEF.filter(q=>q.nps && q.t==='scale');
+  if(!npsQs.length) return '';
+  const segQ = QMAP[SEGMENT.id];
+  const optDefs = (segQ && segQ.options) ? segQ.options.map(function(o){return {v:o.v, l:o.label};}) : null;
+  const groups = {};
+  done.forEach(r=>{ const g = r.answers && r.answers[SEGMENT.id] ? r.answers[SEGMENT.id] : '__none__'; (groups[g]=groups[g]||[]).push(r); });
+  const order = (optDefs ? optDefs.map(o=>o.v) : []).concat(['__none__']);
+  const labelOf = function(v){ if(v==='__none__') return '未填'; if(optDefs){ for(let i=0;i<optDefs.length;i++){ if(optDefs[i].v===v) return optDefs[i].l; } } return String(v); };
+  let rows = '';
+  order.forEach(g=>{
+    const arr = groups[g]; if(!arr) return;
+    rows += `<tr><td>${escapeHtml(labelOf(g))}</td><td>${arr.length}</td>` +
+      npsQs.map(q=>{ const n = computeNPS(arr, q.id); return `<td>${n.n?n.score:'—'}</td>`; }).join('') + `</tr>`;
+  });
+  if(!rows) return `<div class="qblock"><div class="txt-empty">暂无有效完成样本。</div></div>`;
+  const head = `<tr><th>${escapeHtml(SEGMENT.label||SEGMENT.id)}</th><th>样本</th>${npsQs.map(q=>`<th>${escapeHtml(q.title)} NPS</th>`).join('')}</tr>`;
+  return `<div class="sec-title">按${escapeHtml(SEGMENT.label||SEGMENT.id)}分层 · 各产品 NPS</div>
+    <table class="layer">${head}${rows}</table>
+    <p style="font-size:.8rem;color:var(--color-text-muted);margin-top:10px">注：仅统计“有效完成”样本；NPS 按 0–10 推荐分计（9–10 推荐者 / 7–8 中立 / 0–6 贬损者），未作答的样本不计入该产品。</p>`;
+}
+
+function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ---------- 开放时间设置 + 重复提交 ---------- */
+async function loadSettings(){
+  const start=document.getElementById('settingsStart'), end=document.getElementById('settingsEnd'), st=document.getElementById('settingsStatus');
+  const am=document.getElementById('settingsAllowMulti');
+  let s;
+  try{ s=await(await fetch('/api/settings')).json(); }catch(e){ st.textContent='?'; return; }
+  start.value = s.startTime ? s.startTime.replace(' ','T').slice(0,16) : '';
+  end.value = s.endTime ? s.endTime.replace(' ','T').slice(0,16) : '';
+  am.checked = s.allowMulti === true;
+  const n=Date.now();
+  if(!s.startTime && !s.endTime){ st.textContent='当前：一直开放（无时间限制）'; return; }
+  if(s.startTime && n<new Date(s.startTime.replace(' ','T')).getTime()){ st.textContent='当前：还未开放'; return; }
+  if(s.endTime && n>new Date(s.endTime.replace(' ','T')).getTime()){ st.textContent='当前：已结束'; return; }
+  st.textContent='当前：开放中';
+}
+async function saveSettings(){
+  const d={}; const si=document.getElementById('settingsStart').value, ei=document.getElementById('settingsEnd').value;
+  d.startTime = si ? si.replace('T',' ')+':00' : null;
+  d.endTime = ei ? ei.replace('T',' ')+':00' : null;
+  d.allowMulti = document.getElementById('settingsAllowMulti').checked;
+  const msg=document.getElementById('settingsMsg');
+  try{ const r=await(await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})).json();
+    if(r.ok){ msg.textContent='✓ 已保存'; loadSettings(); } else msg.textContent='保存失败'; }catch(e){ msg.textContent='保存失败：服务未响应'; }
+  setTimeout(()=>msg.textContent='',3000);
+}
+function onAllowMultiChange(){
+  const am=document.getElementById('settingsAllowMulti');
+  document.getElementById('settingsMsg').textContent=am.checked?'⚡ 开启后同一用户可多次提交':'⚡ 关闭后每人限提交一次';
+}
+async function clearSettings(){
+  const msg=document.getElementById('settingsMsg');
+  const d={startTime:null, endTime:null};
+  d.allowMulti = document.getElementById('settingsAllowMulti').checked;
+  try{ const r=await(await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})).json();
+    if(r.ok){ msg.textContent='✓ 已清空，问卷一直开放'; loadSettings(); } else msg.textContent='清空失败'; }catch(e){ msg.textContent='清空失败'; }
+  setTimeout(()=>msg.textContent='',3000);
+}
+
+/* ---------- 后台密码登录 ---------- */
+async function doLogin(){
+  const pw=document.getElementById('loginPw').value;
+  document.getElementById('loginErr').style.display='none';
+  try{ const r=await(await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})})).json();
+    if(r && r.ok){ sessionStorage.setItem('admin_auth','1'); document.getElementById('loginOverlay').classList.add('login-hide'); document.getElementById('adminContent').classList.remove('login-hide'); loadSettings(); load(); }
+    else { document.getElementById('loginErr').style.display='block'; }
+  }catch(e){ document.getElementById('loginErr').style.display='block'; }
+}
+function logout(){
+  sessionStorage.removeItem('admin_auth');
+  document.getElementById('loginOverlay').classList.remove('login-hide');
+  document.getElementById('adminContent').classList.add('login-hide');
+  document.getElementById('loginPw').value='';
+  document.getElementById('loginErr').style.display='none';
+}
+(function checkAuth(){
+  if(sessionStorage.getItem('admin_auth')){ document.getElementById('loginOverlay').classList.add('login-hide'); loadSettings(); load(); }
+  else { document.getElementById('adminContent').classList.add('login-hide'); }
+})();
+</script>
+</body>
+</html>

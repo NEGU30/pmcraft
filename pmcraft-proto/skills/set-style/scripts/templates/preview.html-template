@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设计系统样板 - {style_name}</title>
+  <link href="https://fonts.googleapis.com/css2?family={heading_font}:wght@{heading_weight}&family={body_font}:wght@{body_weight}&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="_common.css">
+  <style>
+    :root {
+      --color-primary: {primary_hex};
+      --color-accent: {accent_hex};
+      --color-background: {background_hex};
+      --color-surface: {surface_hex};
+      --color-text: {text_hex};
+      --color-border: {border_hex};
+      --color-danger: {danger_hex};
+      --color-success: {success_hex};
+      --color-warning: {warning_hex};
+      --font-heading: '{heading_font}', sans-serif;
+      --font-body: '{body_font}', sans-serif;
+      --space-md: 8px;
+      --space-lg: 16px;
+      --radius-sm: {radius_sm}px;
+      --radius-md: {radius_md}px;
+      --radius-lg: {radius_lg}px;
+      --shadow-md: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    body {
+      margin: 0;
+      padding: calc(32px * var(--spacing-scale, 1)) calc(24px * var(--spacing-scale, 1)) calc(120px * var(--spacing-scale, 1));
+      background: var(--color-background);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      font-size: var(--fs-base, 16px);
+      line-height: 1.6;
+    }
+
+    .page-head {
+      max-width: 1080px;
+      margin: 0 auto calc(8px * var(--spacing-scale, 1));
+    }
+    .page-head h1 { margin: 0 0 4px; font-family: var(--font-heading); font-weight: 700; }
+    .page-head p { margin: 0; color: #666; font-size: 0.875em; }
+
+    .section {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: calc(28px * var(--spacing-scale, 1)) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .section:last-of-type { border-bottom: none; }
+    .section h2 { margin: 0 0 calc(16px * var(--spacing-scale, 1)); font-family: var(--font-heading); font-weight: 700; font-size: 1.125em; }
+
+    /* Typography 层级（相对单位，跟随 --fs-base 缩放） */
+    .typo { display: grid; gap: calc(8px * var(--spacing-scale, 1)); }
+    .typo .typo-item { display: flex; align-items: baseline; gap: calc(16px * var(--spacing-scale, 1)); }
+    .typo .typo-item .label { width: 120px; color: #888; font-size: 0.75em; flex-shrink: 0; }
+    .typo .typo-item h1, .typo .typo-item h2, .typo .typo-item h3, .typo .typo-item p { margin: 0; }
+    .typo .typo-item h1 { font-size: 2em; }
+    .typo .typo-item h2 { font-size: 1.5em; }
+    .typo .typo-item h3 { font-size: 1.1875em; }
+    .typo .typo-item p { font-size: 1em; }
+    .typo .typo-item p.small { font-size: 0.875em; color: #888; }
+
+    /* 调色板 */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: calc(12px * var(--spacing-scale, 1));
+    }
+    .color-swatch {
+      border-radius: var(--radius-md);
+      padding: calc(16px * var(--spacing-scale, 1)) calc(12px * var(--spacing-scale, 1));
+      color: #fff;
+      font-size: 0.8125em;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .color-swatch small { opacity: 0.75; font-size: 0.75em; }
+
+    /* 按钮/输入框/标签行（字号跟随 --fs-base，间距跟随 --spacing-scale） */
+    .btn-row { display: flex; flex-wrap: wrap; gap: calc(12px * var(--spacing-scale, 1)); align-items: center; }
+    .btn-row .btn-primary { border-radius: var(--radius-lg, 20px); }
+    .btn-row .btn, .input-row .input { font-size: 0.875em; }
+    .input-row { display: flex; flex-wrap: wrap; gap: calc(12px * var(--spacing-scale, 1)); align-items: flex-start; }
+    .input-focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(1, 99, 226, 0.12); }
+    .badge-row { display: flex; flex-wrap: wrap; gap: calc(12px * var(--spacing-scale, 1)); }
+    .card-row { display: flex; flex-wrap: wrap; gap: calc(16px * var(--spacing-scale, 1)); align-items: stretch; }
+    .card-row .card { max-width: 320px; }
+
+    /* 动效演示 */
+    .motion-demo { display: flex; align-items: center; gap: 12px; }
+    .motion-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      animation: demo-bounce 0.8s ease-in-out infinite;
+    }
+    @keyframes demo-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Tweaks 面板 */
+    #tweaks-panel {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      width: 240px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      z-index: 9999;
+      font-size: 13px;
+    }
+    #tweaks-panel .tweaks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--color-border);
+      font-weight: 700;
+    }
+    #tweaks-panel .tweaks-header button {
+      border: none;
+      background: none;
+      color: var(--color-primary);
+      cursor: pointer;
+      font-size: 12px;
+    }
+    #tweaks-panel .tweaks-body {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+    #tweaks-panel .tweaks-body label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    #tweaks-panel .tweaks-body select {
+      font-size: 12px;
+      padding: 3px 6px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--color-text);
+    }
+    #tweaks-panel.collapsed .tweaks-body { display: none; }
+
+    /* 暗色模式 */
+    [data-theme="dark"] {
+      --color-background: #131722;
+      --color-surface: #1D2330;
+      --color-text: #E6E9F0;
+      --color-border: #2E3648;
+    }
+    [data-theme="dark"] .color-swatch { box-shadow: none; }
+
+    /* 动效关闭 */
+    .reduce-motion * {
+      animation: none !important;
+      transition: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-head">
+    <h1>设计系统样板 · {style_name}</h1>
+    <p>主色 {primary_hex} · 字体 {heading_font} · 圆角 {radius_lg}px</p>
+  </div>
+
+  <!-- 1. 字体层级展示区 -->
+  <section class="section typography-section">
+    <h2>Typography 字体层级</h2>
+    <div class="typo">
+      <div class="typo-item"><span class="label">H1 / {h1_size} / {heading_weight}</span><h1>标题 H1</h1></div>
+      <div class="typo-item"><span class="label">H2 / {h2_size} / {heading_weight}</span><h2>标题 H2</h2></div>
+      <div class="typo-item"><span class="label">H3 / {h3_size} / {heading_weight}</span><h3>标题 H3</h3></div>
+      <div class="typo-item"><span class="label">Body / {body_size} / {body_weight}</span><p>正文文本，用于段落内容展示。</p></div>
+      <div class="typo-item"><span class="label">Small / {small_size} / {body_weight}</span><p class="small">小号文本，用于辅助说明。</p></div>
+    </div>
+  </section>
+
+  <!-- 2. 调色板展示区 -->
+  <section class="section palette-section">
+    <h2>Colors 调色板</h2>
+    <div class="swatch-grid">
+      <div class="color-swatch" style="background: var(--color-primary)">主色 Primary<small>{primary_hex}</small></div>
+      <div class="color-swatch" style="background: var(--color-accent)">辅色 Accent<small>{accent_hex}</small></div>
+      <div class="color-swatch" style="background: var(--color-success)">成功 Success<small>{success_hex}</small></div>
+      <div class="color-swatch" style="background: var(--color-danger)">危险 Danger<small>{danger_hex}</small></div>
+      <div class="color-swatch" style="background: var(--color-warning)">警告 Warning<small>{warning_hex}</small></div>
+      <div class="color-swatch" style="background: var(--color-background); color: var(--color-text); border: 1px solid var(--color-border)">背景 Background<small>{background_hex}</small></div>
+      <div class="color-swatch" style="background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border)">表面 Surface<small>{surface_hex}</small></div>
+    </div>
+  </section>
+
+  <!-- 3. 按钮样式区 -->
+  <section class="section buttons-section">
+    <h2>Buttons 按钮</h2>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-lg">主按钮</button>
+      <button class="btn btn-primary">主按钮</button>
+      <button class="btn btn-secondary">次按钮</button>
+      <button class="btn btn-ghost">幽灵按钮</button>
+      <button class="btn btn-danger">危险按钮</button>
+    </div>
+  </section>
+
+  <!-- 4. 卡片样式区 -->
+  <section class="section cards-section">
+    <h2>Cards 卡片</h2>
+    <div class="card-row">
+      <div class="card">
+        <h3 style="margin:0 0 8px">卡片</h3>
+        <p style="margin:0 0 16px;font-size:14px;color:#666">圆角、阴影、内边距效果。</p>
+        <button class="btn btn-primary" style="width:100%">主操作</button>
+      </div>
+      <div class="card card-flat">
+        <h3 style="margin:0 0 8px">平面卡片</h3>
+        <p style="margin:0 0 16px;font-size:14px;color:#666">无阴影次级容器。</p>
+        <button class="btn btn-secondary" style="width:100%">次操作</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 状态标签区 -->
+  <section class="section badges-section">
+    <h2>Badges 标签</h2>
+    <div class="badge-row">
+      <span class="badge badge-success">成功</span>
+      <span class="badge badge-danger">危险</span>
+      <span class="badge badge-warning">警告</span>
+    </div>
+  </section>
+
+  <!-- 6. 表单输入框区 -->
+  <section class="section forms-section">
+    <h2>Forms 表单</h2>
+    <div class="input-row">
+      <input type="text" class="input" style="width:280px" placeholder="默认态输入框">
+      <input type="text" class="input input-focus" style="width:280px" placeholder="聚焦态输入框（模拟）">
+      <input type="text" class="input" style="width:280px" placeholder="禁用态输入框" disabled>
+    </div>
+  </section>
+
+  <!-- 6.5 动效演示区 -->
+  <section class="section motion-section">
+    <h2>Motion 动效演示</h2>
+    <div class="motion-demo">
+      <div class="motion-dot"></div>
+      <span>动效演示：开启时圆点跳动，关闭后静止</span>
+    </div>
+  </section>
+
+  <!-- 7. Tweaks 面板（浮动右下角，可收起） -->
+  <div id="tweaks-panel">
+    <div class="tweaks-header">
+      <span>Tweaks</span>
+      <button onclick="toggleTweaks()">收起/展开</button>
+    </div>
+    <div class="tweaks-body">
+      <label>主题色
+        <select onchange="applyTheme(this.value)">
+          <option value="blue">默认蓝</option>
+          <option value="green">墨绿</option>
+          <option value="orange">暖橙</option>
+        </select>
+      </label>
+      <label>圆角
+        <select onchange="applyRadius(this.value)">
+          <option value="{radius_lg}">大圆角（{radius_lg}px）</option>
+          <option value="8">小圆角</option>
+          <option value="0">直角</option>
+        </select>
+      </label>
+      <label>字号
+        <select onchange="applyFontSize(this.value)">
+          <option value="16">标准</option>
+          <option value="18">大</option>
+          <option value="20">超大</option>
+        </select>
+      </label>
+      <label>明暗模式
+        <select onchange="applyThemeMode(this.value)">
+          <option value="light">亮色</option>
+          <option value="dark">暗色</option>
+        </select>
+      </label>
+      <label>密度
+        <select onchange="applyDensity(this.value)">
+          <option value="1">舒适</option>
+          <option value="0.75">紧凑</option>
+          <option value="1.25">宽松</option>
+        </select>
+      </label>
+      <label>动效
+        <select onchange="applyMotion(this.value)">
+          <option value="on">开启</option>
+          <option value="off">关闭</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <script>
+    // Tweaks 面板：实时调整设计令牌
+    // 必须实现：toggleTweaks(), applyTheme(), applyRadius(), applyFontSize()
+    //           applyThemeMode(), applyDensity(), applyMotion()
+    // 必须通过 getComputedStyle(document.documentElement) 可读取当前 CSS 变量值
+    function toggleTweaks() {
+      document.getElementById('tweaks-panel').classList.toggle('collapsed');
+    }
+    // 主题色
+    function applyTheme(theme) {
+      const root = document.documentElement;
+      if (theme === 'blue') {
+        root.style.setProperty('--color-primary', '{primary_hex}');
+        root.style.setProperty('--color-accent', '{accent_hex}');
+      } else if (theme === 'green') {
+        root.style.setProperty('--color-primary', '#16794E');
+        root.style.setProperty('--color-accent', '#30A46C');
+      } else if (theme === 'orange') {
+        root.style.setProperty('--color-primary', '#D97416');
+        root.style.setProperty('--color-accent', '#F5A623');
+      }
+    }
+    // 圆角
+    function applyRadius(v) {
+      document.documentElement.style.setProperty('--radius-lg', v + 'px');
+      document.documentElement.style.setProperty('--radius-md', Math.max(4, Math.round(v / 2)) + 'px');
+    }
+    // 字号（--fs-base 驱动 body 及各元素 em 相对尺寸）
+    function applyFontSize(v) {
+      document.documentElement.style.setProperty('--fs-base', v + 'px');
+    }
+    // 明暗模式
+    function applyThemeMode(mode) {
+      document.body.setAttribute('data-theme', mode);
+    }
+    // 密度
+    function applyDensity(scale) {
+      document.documentElement.style.setProperty('--spacing-scale', scale);
+    }
+    // 动效
+    function applyMotion(mode) {
+      document.documentElement.classList.toggle('reduce-motion', mode === 'off');
+    }
+  </script>
+</body>
+</html>

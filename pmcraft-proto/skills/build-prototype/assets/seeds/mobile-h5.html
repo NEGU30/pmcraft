@@ -1,0 +1,158 @@
+<!doctype html>
+<!--
+  proto-builder 种子模板 — 移动-H5 网页
+
+  平台：移动端浏览器 H5
+  Chrome：顶部固定导航栏 + 单列内容流
+  布局范式：响应式单列，触屏友好大点击区域
+  引入：@import url('../_common.css') — 通用组件样式（运行时位于 prototype/working/_common.css）
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>[REPLACE] Page Title</title>
+  <link rel="stylesheet" href="../design-system.css" />
+  <style>
+    @import url('../_common.css');
+
+    /* ── Mobile Shell ─────────────────────────────────────────────────── */
+    body {
+      max-width: 480px; margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────────── */
+    .mobile-header {
+      position: sticky; top: 0; z-index: 50;
+      height: 48px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 12px;
+    }
+    .mobile-header .back-btn {
+      display: grid; place-items: center;
+      width: 32px; height: 32px;
+      background: none; border: 0; padding: 0;
+      color: var(--color-text); cursor: pointer;
+      border-radius: var(--radius-md, 6px);
+    }
+    .mobile-header .back-btn:hover { background: color-mix(in oklch, var(--color-text) 6%, transparent); }
+    .mobile-header .header-title {
+      flex: 1; font-size: 16px; font-weight: 600;
+      text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .mobile-header .header-action {
+      font-size: 13px; color: var(--color-primary);
+      background: none; border: 0; cursor: pointer;
+      font-weight: 500; padding: 4px 8px;
+      border-radius: var(--radius-md, 6px);
+    }
+
+    /* ── Content ──────────────────────────────────────────────────────── */
+    .mobile-content {
+      padding: 16px;
+    }
+
+    /* ── List Card ────────────────────────────────────────────────────── */
+    .list-card {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--color-border);
+      min-height: 52px;
+      cursor: pointer;
+    }
+    .list-card:first-child { border-top: 1px solid var(--color-border); }
+    .list-card:active { background: color-mix(in oklch, var(--color-text) 4%, transparent); }
+    .list-card .card-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: color-mix(in oklch, var(--color-primary) 15%, transparent);
+      flex-shrink: 0;
+    }
+    .list-card .card-body  { flex: 1; min-width: 0; }
+    .list-card .card-title { font-size: 15px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .list-card .card-desc  { font-size: 13px; color: var(--color-text-secondary, var(--color-text)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+    .list-card .card-meta  { font-size: 12px; color: var(--color-text-secondary, var(--color-text)); margin-top: 2px; }
+    .list-card .card-right { text-align: right; flex-shrink: 0; }
+
+    /* ── Tab Scroll ───────────────────────────────────────────────────── */
+    .tab-scroll {
+      display: flex; gap: 0;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .tab-scroll::-webkit-scrollbar { display: none; }
+    @supports (scrollbar-width: none) {
+      .tab-scroll { scrollbar-width: none; }
+    }
+    .tab-scroll .tab-item {
+      flex-shrink: 0; padding: 10px 16px;
+      font-size: 14px; font-weight: 500;
+      color: var(--color-text-secondary, var(--color-text));
+      border-bottom: 2px solid transparent;
+      background: none; cursor: pointer;
+    }
+    .tab-scroll .tab-item.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    /* ── Bottom Sheet ─────────────────────────────────────────────────── */
+    .bottom-sheet-overlay {
+      position: fixed; inset: 0; z-index: 150;
+      background: color-mix(in oklch, var(--color-text) 40%, transparent);
+      display: none;
+    }
+    .bottom-sheet-overlay.show { display: block; }
+    .bottom-sheet {
+      position: fixed; bottom: 0; left: 50%; z-index: 151;
+      transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      background: var(--color-surface);
+      border-radius: 16px 16px 0 0;
+      padding: 12px 16px 24px;
+      display: none;
+    }
+    .bottom-sheet.show { display: block; animation: sheet-up 0.25s ease-out; }
+    @keyframes sheet-up { from { transform: translateX(-50%) translateY(100%); } }
+    .bottom-sheet-handle {
+      width: 36px; height: 4px;
+      background: var(--color-border);
+      border-radius: 2px;
+      margin: 0 auto 12px;
+    }
+    .bottom-sheet-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 0; font-size: 15px;
+      cursor: pointer; border-bottom: 1px solid var(--color-border);
+    }
+    .bottom-sheet-item:last-child { border-bottom: 0; }
+
+    /* ── Sticky bottom bar ────────────────────────────────────────────── */
+    .sticky-bottom {
+      position: sticky; bottom: 0;
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      padding: 12px 16px;
+      display: flex; gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ═══ HEADER ═══ -->
+  <header class="mobile-header" data-pb-id="mobile-header">
+    <button type="button" class="back-btn" title="返回"><svg class="icon icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" /></svg></button>
+    <span class="header-title">[REPLACE] 页面标题</span>
+    <button type="button" class="header-action">[REPLACE] 操作</button>
+  </header>
+
+  <!-- ═══ CONTENT ═══ -->
+  <main class="mobile-content" data-pb-id="content">
+    <!-- ═══════════════════════════════════════════════════════════
+         PASTE LAYOUTS FROM references/layouts/mobile-h5-layouts.md HERE.
+         ═══════════════════════════════════════════════════════════ -->
+  </main>
+</body>
+</html>

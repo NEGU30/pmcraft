@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pmcraft 问卷调研</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232C6E8F'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --color-primary:#2C6E8F; --color-primary-hover:#235A76; --color-primary-soft:#EAF2F6;
+    --color-background:#F4F6F5; --color-surface:#FDFEFE; --color-text:#26323F;
+    --color-text-muted:#5B6B78; --color-text-placeholder:#9AA7B0; --color-border:#DCE3E4;
+    --color-danger:#C1554F; --color-success:#2F855A; --color-warning:#C0872E;
+    --font-heading:'Sora','Noto Sans SC',sans-serif; --font-body:'Noto Sans SC','Sora',system-ui,sans-serif;
+    --font-mono:ui-monospace,'Cascadia Code',Consolas,monospace;
+    --radius-sm:4px; --radius-md:8px; --radius-lg:12px;
+    --shadow-sm:0 1px 2px rgba(38,50,63,.06); --shadow-md:0 2px 8px rgba(38,50,63,.08); --shadow-lg:0 8px 24px rgba(38,50,63,.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--color-background);color:var(--color-text);font-family:var(--font-body);
+    line-height:1.7;-webkit-font-smoothing:antialiased;}
+  code{font-family:var(--font-mono);background:var(--color-primary-soft);color:var(--color-primary-hover);
+    padding:1px 5px;border-radius:4px;font-size:.85em;}
+
+  /* 顶部：标题 + 进度 */
+  header.top{position:sticky;top:0;z-index:100;background:var(--color-surface);border-bottom:1px solid var(--color-border);}
+  .top-inner{max-width:760px;margin:0 auto;padding:13px 24px 0;}
+  .top-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px;}
+  .brand{font-family:var(--font-heading);font-weight:700;font-size:1rem;}
+  .brand small{color:var(--color-text-muted);font-weight:400;margin-left:8px;font-size:.8rem;}
+  .step-label{font-size:.85rem;color:var(--color-text-muted);white-space:nowrap;}
+  .prog{height:5px;background:var(--color-border);}
+  .prog>i{display:block;height:100%;width:0;background:var(--color-primary);border-radius:0 3px 3px 0;transition:width .35s ease;}
+  header.top.hide{display:none;}
+
+  main{max-width:760px;margin:0 auto;padding:34px 24px 100px;}
+
+  /* 封面 */
+  .cover h1{font-family:var(--font-heading);font-weight:700;font-size:1.9rem;margin:0 0 6px;}
+  .cover .sub{color:var(--color-text-muted);margin:0 0 26px;}
+  .lead{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);
+    padding:24px 26px;box-shadow:var(--shadow-sm);margin-bottom:28px;}
+  .lead p{margin:0 0 14px;}
+  .lead ul{margin:6px 0 0;padding-left:0;list-style:none;}
+  .lead li{position:relative;padding:8px 0 8px 26px;border-top:1px solid var(--color-border);}
+  .lead li:before{content:"";position:absolute;left:2px;top:15px;width:8px;height:8px;border-radius:50%;background:var(--color-primary);}
+  .lead li b{font-weight:700;}
+  .meta-line{color:var(--color-text-muted);font-size:.9rem;margin-top:16px;}
+
+  /* 板块 */
+  .board-title{font-family:var(--font-heading);font-weight:700;font-size:1.55rem;margin:0 0 4px;}
+  .board-desc{color:var(--color-text-muted);margin:0 0 26px;font-size:.95rem;}
+
+  .q{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);
+    padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow-sm);scroll-margin-top:90px;}
+  .q.err{border-color:var(--color-danger);}
+  .q-head{display:flex;gap:10px;margin-bottom:16px;align-items:baseline;}
+  .q-no{font-family:var(--font-heading);font-weight:700;color:var(--color-primary);flex:none;line-height:1.6;font-size:1em;}
+  .q-title{font-weight:500;font-size:1.05rem;line-height:1.6;}
+  .q-title .req{color:var(--color-danger);margin-left:3px;}
+  .q-title .opt-tag{color:var(--color-text-muted);font-weight:400;font-size:.8rem;background:#EEF1F0;
+    padding:1px 8px;border-radius:999px;margin-left:8px;vertical-align:middle;}
+  .q-hint{display:block;color:var(--color-text-muted);font-size:.85rem;font-weight:400;margin-top:5px;}
+  .q-err-msg{display:none;color:var(--color-danger);font-size:.85rem;margin-top:10px;}
+  .q.err .q-err-msg{display:block;}
+
+  .opt{display:flex;align-items:center;gap:12px;border:1px solid var(--color-border);border-radius:var(--radius-md);
+    padding:11px 16px;margin-bottom:9px;cursor:pointer;-webkit-user-select:none;user-select:none;transition:border .15s,background .15s;}
+  .opt:last-of-type{margin-bottom:0;}
+  .opt:hover{border-color:#B4C3C6;}
+  .opt .mark{width:20px;height:20px;border:1.5px solid var(--color-border);border-radius:50%;flex:none;transition:all .12s;}
+  .opt.check .mark{border-radius:5px;}
+  .opt.sel{border-color:var(--color-primary);border-width:1.5px;background:var(--color-primary-soft);}
+  .opt.sel .mark{border-color:var(--color-primary);background:var(--color-primary);box-shadow:inset 0 0 0 3px var(--color-surface);}
+  .opt.dis{opacity:.5;cursor:not-allowed;}
+  .opt.dis:hover{border-color:var(--color-border);}
+  .opt-label{flex:1;}
+  .rank-badge{width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center;
+    border:1.5px solid var(--color-border);border-radius:50%;font-size:.74rem;color:var(--color-text-muted);}
+  .opt.sel .rank-badge{border-color:var(--color-primary);background:var(--color-primary);color:#fff;font-weight:600;}
+  .rank-del{margin-left:auto;font-size:.76rem;color:var(--color-text-muted);padding:1px 10px;border:1px solid var(--color-border);
+    border-radius:999px;white-space:nowrap;}
+  .rank-del:hover{color:var(--color-danger);border-color:var(--color-danger);}
+
+  .other-input{margin:2px 0 9px 32px;}
+  .ti{width:100%;font-family:var(--font-body);font-size:1rem;color:var(--color-text);background:var(--color-surface);
+    border:1px solid var(--color-border);border-radius:var(--radius-md);padding:10px 13px;transition:border .15s,box-shadow .15s;}
+  .ti::placeholder{color:var(--color-text-placeholder);}
+  .ti:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-primary-soft);}
+  textarea.ti{resize:vertical;min-height:84px;line-height:1.6;}
+
+.matrix table{width:100%;border-collapse:collapse;font-size:.95rem;}
+.matrix th{font-weight:500;color:var(--color-text-muted);padding:4px 6px 8px;text-align:center;font-size:.88rem;white-space:nowrap;}
+.matrix td{text-align:center;padding:6px 4px;border-bottom:1px solid var(--color-border);}
+.matrix .matrix-row-lbl{text-align:left;font-weight:500;color:var(--color-text);padding-right:16px;white-space:nowrap;}
+.matrix-btn{width:32px;height:32px;border:1.5px solid var(--color-border);border-radius:50%;background:var(--color-surface);cursor:pointer;transition:all .12s;}
+.matrix-btn:hover{border-color:var(--color-primary);}
+.matrix-btn.sel{border-color:var(--color-primary);background:var(--color-primary);box-shadow:inset 0 0 0 3px var(--color-surface);}
+
+  .scale{display:flex;gap:6px;flex-wrap:wrap;}
+  .scale button{width:46px;height:46px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface);
+    font-family:var(--font-body);font-size:.95rem;color:var(--color-text-muted);cursor:pointer;transition:all .12s;}
+  .scale button:hover{border-color:var(--color-primary);color:var(--color-text);}
+  .scale button.sel{background:var(--color-primary);color:#fff;border-color:var(--color-primary);font-weight:600;}
+  .scale-ends{display:flex;justify-content:space-between;font-size:.8rem;color:var(--color-text-muted);margin-top:8px;max-width:568px;}
+  .likert{display:flex;gap:8px;flex-wrap:wrap;}
+  .likert button{flex:1;min-width:72px;padding:14px 8px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface);font-family:var(--font-body);font-size:.9rem;color:var(--color-text-muted);cursor:pointer;transition:all .12s;text-align:center;line-height:1.3;word-break:keep-all;}
+  .likert button:hover{border-color:var(--color-primary);color:var(--color-text);}
+  .likert button.sel{background:var(--color-primary);color:#fff;border-color:var(--color-primary);font-weight:600;}
+  .likert-val{display:block;font-size:.75rem;opacity:.7;margin-top:4px;}
+  .likert button.sel .likert-val{opacity:.9;}
+  .att-note{background:#F6EEDD;color:#7a5b12;border-radius:var(--radius-md);padding:9px 13px;font-size:.88rem;margin-bottom:14px;}
+  .att-note b{color:#5f470e;}
+
+  .maxhint{font-size:.82rem;color:var(--color-text-muted);margin:-2px 0 12px;}
+  .maxhint.warn{color:var(--color-warning);}
+
+  .cond-note{color:var(--color-text-muted);font-size:.9rem;background:#EEF1F0;border-radius:var(--radius-md);padding:12px 14px;}
+
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:12px;}
+  .nav .spacer{flex:1;}
+  .btn{font-family:var(--font-body);font-weight:500;font-size:.98rem;border-radius:var(--radius-md);
+    padding:12px 26px;border:1px solid transparent;cursor:pointer;transition:all .15s;}
+  .btn:disabled{opacity:.55;cursor:not-allowed;}
+  .btn-primary{background:var(--color-primary);color:#fff;}
+  .btn-primary:hover:not(:disabled){background:var(--color-primary-hover);}
+  .btn-secondary{background:transparent;color:var(--color-primary);border-color:var(--color-primary);}
+  .btn-secondary:hover{background:var(--color-primary-soft);}
+  .btn-lg{padding:14px 40px;font-size:1.05rem;}
+
+  .err-banner{display:none;background:#F7E7E6;color:var(--color-danger);border:1px solid #E4BEBB;
+    border-radius:var(--radius-md);padding:11px 15px;font-size:.9rem;margin-bottom:18px;}
+  .err-banner.show{display:block;}
+
+  /* 结束页 */
+  .endcard{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-md);padding:44px 40px;text-align:center;margin-top:20px;}
+  .endcard .tick{width:60px;height:60px;border-radius:50%;background:var(--color-primary-soft);color:var(--color-primary);
+    display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 20px;}
+  .endcard h2{font-family:var(--font-heading);font-weight:700;font-size:1.5rem;margin:0 0 12px;}
+  .endcard p{color:var(--color-text-muted);margin:0 auto 8px;max-width:440px;}
+  .endcard .contact{margin-top:18px;font-size:.95rem;}
+  .endcard .again{margin-top:26px;}
+  .endcard .again a{color:var(--color-primary);cursor:pointer;font-size:.9rem;text-decoration:underline;}
+  .submitting{pointer-events:none;opacity:.7;}
+
+  @media (max-width:600px){
+    main{padding:24px 16px 80px;}
+    .top-inner{padding:11px 16px 0;}
+    .scale button{width:40px;height:40px;}
+    .endcard{padding:34px 22px;}
+  }
+</style>
+</head>
+<body>
+<header class="top" id="topbar">
+  <div class="top-inner">
+    <div class="top-row">
+      <div class="brand">pmcraft 问卷调研 <small>约 8–10 分钟</small></div>
+      <div class="step-label" id="stepLabel"></div>
+    </div>
+  </div>
+  <div class="prog"><i id="progFill"></i></div>
+</header>
+
+<main id="app"><!-- 动态渲染 --></main>
+
+<script>
+/* ===== CONFIG: 问卷配置（从 survey.json 加载） ===== */
+var SURVEY = null; // 异步加载后赋值
+
+/* ===== 条件函数（JSON 不支持函数，引擎保留） ===== */
+var CONDITIONS = {};
+
+/* ============================================================
+   状态 & 引擎
+   ============================================================ */
+const LS_KEY = 'prp_survey_submitted_v1';
+const state = { step: 0, answers: {}, startTime: 0, submitting:false };
+// step: 0=封面, 1..N=boards(索引 step-1), 'done', 'terminated'
+const app = document.getElementById('app');
+const topbar = document.getElementById('topbar');
+const stepLabel = document.getElementById('stepLabel');
+const progFill = document.getElementById('progFill');
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function setProgress(){
+  if(state.step===0 || state.step==='done' || state.step==='terminated'){
+    topbar.classList.add('hide'); return;
+  }
+  topbar.classList.remove('hide');
+  const b = SURVEY.boards[state.step-1];
+  const idx = state.step, total = SURVEY.boards.length;
+  stepLabel.textContent = `第 ${idx} 部分 / 共 ${total} 部分`;
+  progFill.style.width = b.progress + '%';
+}
+
+/* ---------- 渲染单个问题 ---------- */
+function renderQuestion(q){
+  const a = state.answers;
+  const optTag = q.required===false ? '<span class="opt-tag">选填</span>' : '';
+  const reqMark = q.required===false ? '' : '<span class="req">*</span>';
+  const numLabel = /^Q?\d/.test(q.id)||q.id==='S1' ? q.id : (q.id==='ATT'?'✓':q.id);
+  let head = `<div class="q-head"><span class="q-no">${numLabel}</span><div class="q-title">${esc(q.title)}${reqMark}${optTag}`;
+  if(q.hint) head += `<span class="q-hint">${esc(q.hint)}</span>`;
+  head += `</div></div>`;
+
+  // 条件跳过（支持 CONDITIONS 映射 + q.condition 内联函数）
+  var condFn = q.condition || (CONDITIONS[q.id]);
+  if(condFn && !condFn(a)){
+    return `<div class="q" id="q_${q.id}" data-qid="${q.id}">${head}<div class="cond-note">${esc(q.condNote||'本题当前无需作答，可直接进入下一步。')}</div></div>`;
+  }
+
+  let body = '';
+  if(q.type==='single' || q.type==='multi'){
+    const isMulti = q.type==='multi';
+    // filterBy：选项仅保留来源多选题（如 Q10）已勾选的项；来源题的「其他」沿用其填写名称
+    let opts = q.options || [];
+    if(q.filterBy){
+      const srcSel = Array.isArray(a[q.filterBy]) ? a[q.filterBy] : [];
+      const srcQ = findQ(q.filterBy);
+      const srcOther = a[q.filterBy+'_other'];
+      opts = opts.filter(o=>srcSel.includes(o.v)).map(o=>{
+        const so = srcQ && (srcQ.options||[]).find(x=>x.v===o.v);
+        if(so && so.isOther && srcOther) return Object.assign({}, o, {label: srcOther, _inherited: srcOther});
+        return o;
+      });
+    }
+    let sel = isMulti ? (a[q.id]||[]) : a[q.id];
+    // 来源题选择变化后剔除陈旧作答（与排序题同一处理）
+    if(q.filterBy && sel!==undefined){
+      if(isMulti){
+        const cur = Array.isArray(sel) ? sel : [];
+        const kept = cur.filter(v=>opts.some(o=>o.v===v));
+        if(kept.length !== cur.length){ sel = kept; a[q.id] = kept; }
+      } else if(!opts.some(o=>o.v===sel)){
+        delete a[q.id]; delete a[q.id+'_other']; sel = undefined;
+      }
+    }
+    // 上限提示
+    if(q.max){
+      const n = (a[q.id]||[]).length;
+      body += `<div class="maxhint ${n>=q.max?'warn':''}">已选 ${n} / ${q.max} 项${n>=q.max?'（已达上限）':''}</div>`;
+    }
+    opts.forEach(o=>{
+      const on = isMulti ? sel.includes(o.v) : sel===o.v;
+      let dis = '';
+      if(isMulti && q.max && !on && (a[q.id]||[]).length>=q.max) dis='dis';
+      body += `<div class="opt ${isMulti?'check':''} ${on?'sel':''} ${dis}" data-qid="${q.id}" data-val="${o.v}" data-exclusive="${o.exclusive?1:0}">
+        <span class="mark"></span><span class="opt-label">${esc(o.label)}</span></div>`;
+      if(o.isOther && on){
+        if(!a[q.id+'_other'] && o._inherited) a[q.id+'_other'] = o._inherited; // 沿用来源题填写的名称
+        body += `<div class="other-input"><input class="ti" data-otherfor="${q.id}" placeholder="请填写"
+          value="${esc(a[q.id+'_other']||'')}"></div>`;
+      }
+    });
+  } else if(q.type==='rank'){
+    // 排序题：选项按 filterBy 引用的多选答案过滤；点击未排项依序追加（上限 q.max），点击已排项移除并重排
+    // filterBy 为契约可选字段：未配置时以本题全部选项为可见集（缺省不应渲染出空题）
+    const fArr = (q.filterBy && Array.isArray(a[q.filterBy])) ? a[q.filterBy] : (q.options||[]).map(o=>o.v);
+    const visOpts = (q.options||[]).filter(o=>fArr.includes(o.v));
+    // 剔除已不在上一题选择中的陈旧排名（如回上一题取消某项），否则可见项编号会从②起跳
+    let ranked = (Array.isArray(a[q.id]) ? a[q.id] : []).filter(v=>visOpts.some(o=>o.v===v));
+    if(!Array.isArray(a[q.id]) || ranked.length !== a[q.id].length) a[q.id] = ranked;
+    const capN = Math.min(q.max || Infinity, fArr.length || 0);
+    const marks = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+    body += `<div class="maxhint ${ranked.length>=capN?'warn':''}">已排 ${ranked.length} / ${capN} 项，按影响从大到小${ranked.length>=capN?'（已达上限）':''}</div>`;
+    visOpts.forEach(o=>{
+      const idx = ranked.indexOf(o.v);
+      const on = idx>=0;
+      body += `<div class="opt check ${on?'sel':''}" data-rank="${q.id}" data-val="${o.v}">
+        <span class="rank-badge">${on?(marks[idx]||(idx+1)):''}</span>
+        <span class="opt-label">${esc(o.label)}</span>${on?'<span class="rank-del">撤</span>':''}</div>`;
+    });
+  } else if(q.type==='scale'){
+    if(q.attNote) body += `<div class="att-note">${q.attNote}</div>`;
+    body += `<div class="scale">`;
+    for(let i=0;i<=10;i++){
+      body += `<button type="button" class="${a[q.id]===i?'sel':''}" data-scale="${q.id}" data-val="${i}">${i}</button>`;
+    }
+    body += `</div>`;
+    if(q.ends) body += `<div class="scale-ends"><span>${esc(q.ends[0])}</span><span>${esc(q.ends[1])}</span></div>`;
+  } else if(q.type==='likert5'||q.type==='likert7'){
+    const is7 = q.type==='likert7';
+    const defs = is7 ? ['非常不同意','不同意','比较不同意','一般','比较同意','同意','非常同意'] : ['非常不同意','不同意','一般','同意','非常同意'];
+    const labels = q.labels || defs;
+    body += '<div class="likert">';
+    labels.forEach(function(lbl,i){
+      const val = i+1;
+      body += '<button type="button" class="'+(a[q.id]===val?'sel':'')+'" data-likert="'+q.id+'" data-val="'+val+'">'+esc(lbl)+'<span class="likert-val">'+val+'</span></button>';
+    });
+    body += '</div>';
+  } else if(q.type==='text'){
+    body += `<input class="ti" data-text="${q.id}" placeholder="${esc(q.placeholder||'')}" value="${esc(a[q.id]||'')}">`;
+  } else if(q.type==='textarea'){
+    body += `<textarea class="ti" data-text="${q.id}" placeholder="${esc(q.placeholder||'')}">${esc(a[q.id]||'')}</textarea>`;
+  } else if(q.type==='matrix'){
+    var arr = a[q.id] || {};
+    body += '<div class="matrix"><table><thead><tr><th></th>';
+    (q.cols||[]).forEach(function(c,i){
+      body += '<th>' + esc(c) + '</th>';
+    });
+    body += '</tr></thead><tbody>';
+    (q.rows||[]).forEach(function(r){
+      body += '<tr><td class="matrix-row-lbl">' + esc(r) + '</td>';
+      (q.cols||[]).forEach(function(c,ci){
+        var s = arr[r] === ci ? ' sel' : '';
+        body += '<td><button type="button" class="matrix-btn' + s + '" data-matrix="' + q.id + '" data-row="' + esc(r) + '" data-col="' + ci + '"></button></td>';
+      });
+      body += '</tr>';
+    });
+    body += '</tbody></table></div>';
+  }
+
+  return `<div class="q" id="q_${q.id}" data-qid="${q.id}">${head}${body}<div class="q-err-msg">${q.pattern ? esc('格式：'+q.hint) : '请完成本题后再继续。'}</div></div>`;
+}
+
+/* ---------- 渲染当前步 ---------- */
+function render(keepScroll){
+  if(!keepScroll) window.scrollTo(0,0);   // 仅翻页导航回顶部；板块内重渲染保留滚动位置
+  setProgress();
+
+  if(state.step===0){ renderCover(); return; }
+  if(state.step==='done'){ renderThanks(SURVEY.thanks, true); return; }
+  if(state.step==='terminated'){ renderThanks(SURVEY.terminate, false); return; }
+
+  const b = SURVEY.boards[state.step-1];
+  const isLast = state.step === SURVEY.boards.length;
+  let html = `<div class="err-banner" id="errBanner">还有必填项没有完成，已为你标出。</div>
+    <h1 class="board-title">${esc(b.title)}</h1>
+    <p class="board-desc">${esc(b.desc)}</p>`;
+  b.questions.forEach(q=> html += renderQuestion(q));
+  html += `<div class="nav">
+      <button class="btn btn-secondary" id="btnPrev">上一步</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" id="btnNext">${isLast?'提交问卷':'下一步'}</button>
+    </div>`;
+  app.innerHTML = html;
+
+  document.getElementById('btnPrev').onclick = goPrev;
+  document.getElementById('btnNext').onclick = goNext;
+  bindInputs();
+}
+
+function renderCover(){
+  app.innerHTML = `<div class="cover">
+    <h1>${esc(SURVEY.intro.title)}</h1>
+    <div class="lead">${SURVEY.intro.leadHtml}</div>
+    <div style="text-align:center"><button class="btn btn-primary btn-lg" id="btnStart">开始填写</button></div>
+  </div>`;
+  document.getElementById('btnStart').onclick = ()=>{
+    state.startTime = Date.now();
+    state.step = 1; render();
+  };
+}
+
+function renderThanks(t, completed){
+  app.innerHTML = `<div class="endcard">
+    <div class="tick">${completed?'✓':'🙏'}</div>
+    <h2>${t.title}</h2>
+    <p>${esc(t.body)}</p>
+    ${t.contact?`<p class="contact">${t.contact}</p>`:''}
+    <div class="again"><a id="again">重新填写一次</a></div>
+  </div>`;
+  document.getElementById('again').onclick = ()=>{
+    try{ localStorage.removeItem(LS_KEY); }catch(e){}
+    state.answers = {}; state.step = 0; state.submitting=false; render();
+  };
+}
+
+/* ---------- 输入绑定 ---------- */
+function bindInputs(){
+  // 选项点击（单/多选）
+  app.querySelectorAll('.opt').forEach(el=>{
+    el.onclick = ()=>{
+      if(el.classList.contains('dis')) return;
+      const qid = el.dataset.qid, val = el.dataset.val;
+      const q = findQ(qid);
+      if(q.type==='single'){
+        state.answers[qid] = val;
+      } else {
+        let arr = state.answers[qid] ? state.answers[qid].slice() : [];
+        const opt = q.options.find(o=>o.v===val);
+        const has = arr.includes(val);
+        if(has){ arr = arr.filter(v=>v!==val); if(opt.isOther) delete state.answers[qid+'_other']; }
+        else {
+          if(opt.exclusive){ arr = [val]; }
+          else {
+            // 移除互斥项
+            const exVals = q.options.filter(o=>o.exclusive).map(o=>o.v);
+            arr = arr.filter(v=>!exVals.includes(v));
+            if(q.max && arr.length>=q.max) return; // 上限保护
+            arr.push(val);
+          }
+        }
+        state.answers[qid] = arr;
+      }
+      clearErr(qid);
+      render(true); // 重渲染以反映互斥/上限/其他框（保留滚动位置）
+    };
+  });
+  // 量表
+  app.querySelectorAll('.scale button').forEach(el=>{
+    el.onclick = ()=>{ const qid=el.dataset.scale; state.answers[qid]=parseInt(el.dataset.val,10); clearErr(qid); render(true); };
+  });
+  // 李克特
+  app.querySelectorAll('.likert button').forEach(el=>{
+    el.onclick = ()=>{ const qid=el.dataset.likert; state.answers[qid]=parseInt(el.dataset.val,10); clearErr(qid); render(true); };
+  });
+  // 排序题：点击未排项依序追加（超 q.max 上限被拦截），点击已排项（或其「撤」）移除并重排
+  app.querySelectorAll('[data-rank]').forEach(el=>{
+    el.onclick = ()=>{
+      const qid = el.dataset.rank, val = el.dataset.val;
+      const q = findQ(qid);
+      let arr = Array.isArray(state.answers[qid]) ? state.answers[qid].slice() : [];
+      const i = arr.indexOf(val);
+      if(i>=0){ arr.splice(i,1); }
+      else {
+        const cap = Math.min(q.max || Infinity, ((q.filterBy && Array.isArray(state.answers[q.filterBy])) ? state.answers[q.filterBy].length : (q.options||[]).length));
+        if(arr.length>=cap) return; // 上限拦截
+        arr.push(val);
+      }
+      state.answers[qid] = arr;
+      clearErr(qid); render(true);
+    };
+  });
+  // 文本/文本域（不重渲染，保留焦点）
+  app.querySelectorAll('input[data-text],textarea[data-text]').forEach(el=>{
+    el.oninput = ()=>{ state.answers[el.dataset.text]=el.value; clearErr(el.dataset.text); };
+  });
+  // 其他填空
+  app.querySelectorAll('input[data-otherfor]').forEach(el=>{
+    el.oninput = ()=>{ state.answers[el.dataset.otherfor+'_other']=el.value; };
+  });
+  // 矩阵
+  app.querySelectorAll('.matrix-btn').forEach(el=>{
+    el.onclick = ()=>{
+      var qid = el.dataset.matrix, row = el.dataset.row, col = parseInt(el.dataset.col,10);
+      var m = state.answers[qid] || {};
+      m[row] = col; state.answers[qid] = m; clearErr(qid); render(true);
+    };
+  });
+}
+
+function findQ(qid){
+  for(const b of SURVEY.boards){ const q=b.questions.find(x=>x.id===qid); if(q) return q; }
+  return null;
+}
+function clearErr(qid){ const el=document.getElementById('q_'+qid); if(el) el.classList.remove('err');
+  const bn=document.getElementById('errBanner'); if(bn) bn.classList.remove('show'); }
+
+/* ---------- 校验 ---------- */
+function validateBoard(b){
+  const a = state.answers, bad = [];
+  b.questions.forEach(q=>{
+    var condFn = q.condition || CONDITIONS[q.id];
+    if(condFn && !condFn(a)) return;                 // 条件跳过
+    if(q.required===false) return;                   // 选填
+    let ok=true;
+    if(q.type==='single'){ ok = !!a[q.id]; }
+    else if(q.type==='multi'){ ok = Array.isArray(a[q.id]) && a[q.id].length>0; }
+    else if(q.type==='rank'){ ok = Array.isArray(a[q.id]) && a[q.id].length>=(q.min||1); }
+    else if(q.type==='scale'){ ok = typeof a[q.id]==='number'; }
+    else if(q.type==='likert5'){ ok = typeof a[q.id]==='number' && a[q.id]>=1 && a[q.id]<=5; }
+    else if(q.type==='likert7'){ ok = typeof a[q.id]==='number' && a[q.id]>=1 && a[q.id]<=7; }
+    else if(q.type==='text'||q.type==='textarea'){
+      ok = !!(a[q.id]&&a[q.id].trim());
+      if(ok && q.pattern){ ok = new RegExp(q.pattern).test(a[q.id].trim()); }
+    }
+    else if(q.type==='matrix'){ var m=a[q.id]; ok=m && q.rows.every(function(r){return typeof m[r]==='number';}); }
+    // 其他框填写校验
+    if(ok && (q.type==='multi')){
+      const sel = a[q.id]||[];
+      q.options.forEach(o=>{ if(o.isOther && sel.includes(o.v) && !(a[q.id+'_other']&&a[q.id+'_other'].trim())) ok=false; });
+    }
+    if(!ok) bad.push(q.id);
+  });
+  return bad;
+}
+
+function goPrev(){
+  if(state.step>1){ state.step--; render(); }
+  else if(state.step===1){ state.step=0; render(); }
+}
+
+function goNext(){
+  const b = SURVEY.boards[state.step-1];
+  const bad = validateBoard(b);
+  if(bad.length){
+    bad.forEach(qid=>{ const el=document.getElementById('q_'+qid); if(el) el.classList.add('err'); });
+    const bn=document.getElementById('errBanner'); if(bn) bn.classList.add('show');
+    const first=document.getElementById('q_'+bad[0]); if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  // S1 逻辑跳转：选「否」→ 提交终止记录 → 终止页
+  if(state.step===1 && state.answers.S1==='B'){ submitTerminated(); return; }
+
+  // 身份校验：当前板块含 empId 题且不允许重复提交 → 异步查重
+  var _allowMulti = window._lockSettings && window._lockSettings.allowMulti;
+  if(!_allowMulti && b.questions.some(function(q){ return q.id==='empId'; }) && state.answers.empId){
+    var mid = (state.answers.empId || '').toString().trim();
+    if(mid){
+      fetch('/api/responses.json',{cache:'no-store'})
+        .then(function(r){ return r.json(); })
+        .then(function(all){
+          var dup = all.find(function(r){ return r.empId===mid && r.completed && !r.terminated; });
+          if(dup){
+            var bn=document.getElementById('errBanner');
+            if(bn){
+              bn.innerHTML = '你已经提交过这份问卷了。如需重新填写，请联系管理员在后台开启"允许重复提交"。';
+              bn.classList.add('show');
+            }
+            return; // 不继续
+          }
+          _goNextContinue();
+        })
+        .catch(function(){ _goNextContinue(); });
+      return;
+    }
+  }
+  _goNextContinue();
+}
+
+function _goNextContinue(){
+  if(state.step === SURVEY.boards.length){
+    if(preSubmitTimeLock()) return;
+    submit(); return;
+  }
+  state.step++; render();
+}
+
+/* ---------- 提交 ---------- */
+function buildPayload(completed, terminated){
+  const a = state.answers;
+  const answers = {};
+  // 收集所有作答项（scale/ATT 单独放）
+  SURVEY.boards.forEach(b=> b.questions.forEach(q=>{
+    if(q.id==='ATT') return;
+    var condFn = q.condition || CONDITIONS[q.id];
+    if(condFn && !condFn(a)){ return; }
+    if(a[q.id]!==undefined) answers[q.id]=a[q.id];
+    if(a[q.id+'_other']!==undefined) answers[q.id+'_other']=a[q.id+'_other'];
+  }));
+  // 提取昵称和工号（顶层字段，通过固定 id 优先，fallback 按题型标题模糊匹配）
+  var _nickname = a.nickname || '';
+  var _empId = a.empId || '';
+  if (!_nickname || !_empId) {
+    SURVEY.boards.forEach(function(b){ b.questions.forEach(function(q){
+      if (q.type !== 'text') return;
+      // 昵称 fallback
+      if (!_nickname && (q.title.indexOf('昵称') >= 0 || q.title.indexOf('名称') >= 0 || q.title.indexOf('姓名') >= 0)) {
+        _nickname = a[q.id] || '';
+      }
+      // 工号 fallback
+      if (!_empId && (q.title.indexOf('工号') >= 0 || q.title.indexOf('工号') >= 0 || q.title.indexOf('编号') >= 0)) {
+        _empId = a[q.id] || '';
+      }
+    }); });
+  }
+  return {
+    completed, terminated,
+    nickname: (_nickname || '').slice(0, 100),
+    empId: (_empId || '').slice(0, 10),
+    answers,
+    attention: (typeof a.ATT==='number') ? {value:a.ATT, passed:a.ATT===7} : null,
+    meta:{
+      durationSec: state.startTime ? Math.round((Date.now()-state.startTime)/1000) : null,
+      userAgent: navigator.userAgent
+    }
+  };
+}
+
+function post(payload, onDone){
+  fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(r => r.json().then(json => ({status: r.status, json: json})))
+    .then(({status, json}) => {
+      if(status === 200){
+        try{ localStorage.setItem(LS_KEY, JSON.stringify({at:Date.now(), id:json&&json.id})); }catch(e){}
+        onDone(true, json);
+      } else {
+        onDone(false, json);
+      }
+    }).catch(err=>{ onDone(false, err); });
+}
+
+function submit(){
+  if(state.submitting) return;
+  state.submitting=true;
+  const btn=document.getElementById('btnNext'); if(btn){ btn.textContent='提交中…'; btn.disabled=true; }
+  post(buildPayload(true,false), (ok, res)=>{
+    state.submitting=false;
+    if(ok){ state.step='done'; render(); }
+    else {
+      if(btn){ btn.textContent='提交问卷'; btn.disabled=false; }
+      const bn=document.getElementById('errBanner');
+      if(bn){
+        if(res && res.error === 'duplicate submission'){
+          bn.innerHTML = '你已经提交过这份问卷了。如需重新填写，请联系管理员在后台开启"允许重复提交"。';
+        } else if(res && res.error){
+          bn.textContent = '提交失败：' + res.error;
+        } else {
+          bn.textContent = '提交失败，请检查后端服务是否已启动，然后重试。';
+        }
+        bn.classList.add('show');
+      }
+    }
+  });
+}
+
+function submitTerminated(){
+  post(buildPayload(false,true), ()=>{ state.step='terminated'; render(); });
+}
+
+/* ---------- 启动：加载配置 → 校验 → 渲染 ---------- */
+function showTimeLock(title, time){
+  topbar.classList.add('hide');
+  app.innerHTML = '<div class="endcard"><div class="tick">⏰</div><h2>'+title+'</h2><p>相关时间：'+time+'</p></div>';
+}
+function preSubmitTimeLock(){
+  // 提交前再校验一次时间窗口（避免填到一半超时）
+  var s = window._lockSettings;
+  if(!s) return false;
+  var n = Date.now();
+  if(s.startTime){ var t=new Date(s.startTime.replace(' ','T')).getTime(); if(n<t){ showTimeLock('问卷尚未开始', s.startTime); return true; } }
+  if(s.endTime){ var t=new Date(s.endTime.replace(' ','T')).getTime(); if(n>t){ showTimeLock('问卷已结束', s.endTime); return true; } }
+  return false;
+}
+(function boot(){
+  var submitted=null;
+  try{ submitted=JSON.parse(localStorage.getItem(LS_KEY)||'null'); }catch(e){}
+  if(submitted){
+    topbar.classList.add('hide');
+    app.innerHTML = '<div class="endcard"><div class="tick">✓</div><h2>你已经提交过这份问卷了</h2><p>感谢你的填写！如果这是误触，或你需要再填一次，可以点击下方按钮。</p><div class="again"><a id="again2">重新填写一次</a></div></div>';
+    document.getElementById('again2').onclick=function(){try{localStorage.removeItem(LS_KEY);}catch(e){}state.step=0;state.answers={};render();};
+    return;
+  }
+  (async function init(){
+    try{
+      var cfg = await (await fetch('/api/survey.json')).json();
+      SURVEY = cfg;
+      /* 条件编译：survey.json 的 condition 按契约存字符串（function body），JSON 无法存函数；
+         加载后编译为函数供渲染/校验/提交流程复用；单题编译失败时降级为恒显示并告警，不拖垮整卷。 */
+      try {
+        (SURVEY.boards || []).forEach(function(b){
+          (b.questions || []).forEach(function(q){
+            if(q && q.condition && typeof q.condition === 'string'){
+              try { q.condition = new Function('a', q.condition); }
+              catch(e){ q.condition = null; console.warn('condition compile failed: ' + q.id); }
+            }
+          });
+        });
+      } catch(e){ /* 结构异常时不阻断问卷加载 */ }
+      var s = await (await fetch('/api/settings')).json();
+      window._lockSettings = s;
+      var n = Date.now();
+      if(s.startTime){ var t=new Date(s.startTime.replace(' ','T')).getTime(); if(n<t){ showTimeLock('问卷尚未开始', s.startTime); return; } }
+      if(s.endTime){ var t=new Date(s.endTime.replace(' ','T')).getTime(); if(n>t){ showTimeLock('问卷已结束', s.endTime); return; } }
+    }catch(e){ /* survey.json 未就绪时静默 */ }
+    if(!SURVEY){
+      app.innerHTML = '<div class="endcard"><div class="tick">⚙</div><h2>问卷加载中</h2><p>请刷新页面重试</p></div>'; return;
+    }
+    render();
+  })();
+})();
+</script>
+</body>
+</html>

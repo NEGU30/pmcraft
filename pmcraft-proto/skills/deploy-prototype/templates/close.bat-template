@@ -1,0 +1,37 @@
+@echo off
+cd /d "%~dp0"
+if not exist "mock\.server.pid" goto none
+REM Validate the PID file BEFORE reading it, and never expand its content into a
+REM parsed command line. findstr reads the file itself, so tampered content cannot
+REM re-parse as commands. Do NOT use `set /a "PIDCHECK=%PID%"` or an unquoted
+REM `echo %PID%|findstr` for this check: a tampered value containing a double quote
+REM closes the surrounding quote pairing (e.g. 123"&calc&") and the embedded command
+REM executes at that very line, before any errorlevel gate runs (verified on cmd.exe).
+findstr /r "[^0-9]" "mock\.server.pid" >nul 2>&1
+if not errorlevel 1 (
+  echo   [WARN] Corrupt PID file - non-numeric. Deleting it.
+  del "mock\.server.pid" >nul 2>&1
+  goto end
+)
+set /p PID=<mock\.server.pid
+REM from here %PID% is digits-only (validated above)
+REM verify PID appears to be a node process before killing (defense against PID reuse)
+tasklist /FI "PID eq %PID%" 2>nul | findstr /i "node" >nul
+if errorlevel 1 (
+  echo   [WARN] PID %PID% does not appear to be node.exe - PID may have been reused.
+  echo          Not killing this process. If the server IS running, stop it via Task Manager.
+  del "mock\.server.pid" >nul 2>&1
+  goto end
+)
+taskkill /F /PID %PID% >nul 2>&1
+if errorlevel 1 (
+  echo   [WARN] Process %PID% not running - already stopped or PID reused.
+) else (
+  echo   [OK] Server stopped - PID %PID%.
+)
+del "mock\.server.pid" >nul 2>&1
+goto end
+:none
+echo   No running server found (mock\.server.pid is missing).
+:end
+pause

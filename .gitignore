@@ -1,0 +1,18 @@
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Claude local overrides
+.claude/settings.local.json
+
+# Editors
+.vscode/
+.idea/
+
+# Logs / temp
+*.log
+*.tmp
+
+# Local-only history (not published)
+*.internal.md

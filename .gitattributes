@@ -1,0 +1,20 @@
+* text=auto
+
+# Shell hooks must stay LF
+*.sh text eol=lf
+*.sh-template text eol=lf
+
+# Windows scripts keep CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.bat-template text eol=crlf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

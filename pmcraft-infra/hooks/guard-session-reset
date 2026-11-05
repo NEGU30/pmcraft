@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# guard-session-reset -- reset Guard-Chat one-time session prompt marker
+# startup/clear reset the per-session "prompted" flag so the next coach/req
+# skill invocation asks once; compact does NOT reset (session not ended) and
+# resume does not match this matcher (same conversation continues, no re-ask).
+GXD="${HOME:-$USERPROFILE}/.claude/user-data/pmcraft-guard-chat"
+mkdir -p "$GXD" 2>/dev/null
+printf '{"prompted":false}\n' > "$GXD/session.json" 2>/dev/null
+exit 0

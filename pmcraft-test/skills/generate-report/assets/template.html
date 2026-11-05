@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>验收测试报告样式（单一事实来源）</title>
+<!--
+  ⚠️ 本文件是报告样式的单一事实来源：report-gen.cjs 正则提取本文件的样式块
+  （STYLE 标签内的内容）嵌入生成的 final-report.html。除样式块外的任何内容
+  （含 body 模板体）都不会被渲染 —— 请不要在此添加模板占位符或 HTML 结构，
+  也不要在此注释中写出 STYLE 开标签字样（会干扰提取正则）。
+  渲染逻辑全部在 assets/scripts/report-gen.cjs 内（字符串拼接生成 HTML）。
+-->
+<style>
+:root {
+  --pass: #22C55E; --fail: #EF4444; --partial: #F59E0B;
+  --skip: #94A3B8; --repaired: #3B82F6; --manual-pass: #0D9488;
+  --bg: #F8FAFC; --card: #FFFFFF; --text: #1E293B;
+  --text-secondary: #64748B; --border: #E2E8F0;
+  --primary: #2563EB; --radius: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: "Segoe UI", -apple-system, sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; padding:24px; }
+h1 { font-size:20px; margin-bottom:4px; }
+h2 { font-size:16px; margin:24px 0 12px; }
+.meta { color:var(--text-secondary); font-size:12px; margin-bottom:24px; }
+
+/* 摘要卡片（四组看板：自动化测试 / 人工测试 / 跳过 / 全量统计） */
+.cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:12px; margin-bottom:12px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; text-align:center; }
+.card .num { font-size:28px; font-weight:700; }
+.card .label { font-size:12px; color:var(--text-secondary); margin-top:4px; }
+.card.pass .num { color:var(--pass); }
+.card.fail .num { color:var(--fail); }
+.card.repair .num { color:var(--repaired); }
+.card.skip .num { color:var(--skip); }
+.card.manual .num { color:var(--manual-pass); }
+.card.rate .num { color:var(--primary); }
+.group-label { font-size:13px; font-weight:700; color:var(--text); margin:16px 0 8px; }
+.skip-detail { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; margin-bottom:12px; }
+.skip-item { display:flex; gap:12px; padding:4px 0; font-size:13px; }
+.skip-item + .skip-item { border-top:1px dashed var(--border); }
+.skip-tc { font-weight:600; min-width:90px; color:var(--text); }
+.skip-reason { color:var(--text-secondary); }
+.summary-note { font-size:12px; color:var(--text-secondary); margin:4px 0 24px; padding:8px 12px; background:#F8FAFC; border-left:3px solid var(--border); border-radius:4px; }
+
+/* 问题清单（每条一行） */
+.issue-item { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--fail); border-radius:var(--radius); padding:10px 14px; margin-bottom:8px; }
+.issue-header { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+.issue-tc { font-weight:700; font-size:13px; }
+.issue-source { font-size:11px; color:var(--text-secondary); }
+.issue-desc { font-size:13px; color:var(--text); line-height:1.6; }
+
+/* 通用表格（问题清单不再用表格，改为 issue-item 卡片；表格样式保留供其他区块） */
+table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:24px; }
+th, td { padding:10px 14px; text-align:left; border-bottom:1px solid var(--border); }
+th { background:#F1F5F9; font-weight:600; font-size:13px; }
+td { font-size:13px; }
+.badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600; }
+.badge-func { background:#FEE2E2; color:#DC2626; }
+.badge-ux { background:#FEF3C7; color:#D97706; }
+.badge-copy { background:#DBEAFE; color:#2563EB; }
+.badge-sug { background:#F3F4F6; color:#6B7280; }
+.badge-manual-passed { background:#CCFBF1; color:#0F766E; }
+.badge-manual-failed { background:#FEE2E2; color:#DC2626; }
+.badge-failcat-env { background:#E0F2FE; color:#0369A1; }
+.badge-failcat-selector { background:#FEF3C7; color:#D97706; }
+.badge-failcat-assertion { background:#FEE2E2; color:#DC2626; }
+.badge-failcat-data { background:#EDE9FE; color:#6D28D9; }
+.badge-failcat-unknown { background:#F3F4F6; color:#6B7280; }
+
+/* TC 详情 */
+details { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:8px; overflow:hidden; }
+summary { padding:12px 16px; cursor:pointer; font-weight:600; font-size:14px; display:flex; align-items:center; gap:8px; }
+summary::-webkit-details-marker { display:none; }
+.tc-status { display:inline-block; width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.tc-status.pass { background:var(--pass); }
+.tc-status.fail { background:var(--fail); }
+.tc-status.partial { background:var(--partial); }
+.tc-status.skip { background:var(--skip); }
+.tc-status.manual-passed { background:var(--manual-pass); }
+.tc-status.manual-failed { background:var(--fail); }
+.tc-status.needs-manual { background:var(--partial); }
+.tc-duration { margin-left:auto; font-weight:400; color:var(--text-secondary); font-size:12px; }
+.tc-body { padding:0 16px 16px; }
+.step { padding:8px 0; border-bottom:1px solid var(--border); }
+.step:last-child { border-bottom:none; }
+.step-header { display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:8px; }
+.step-msg { font-size:12px; color:var(--text-secondary); margin-bottom:4px; }
+.step-error { background:#FEF2F2; border:1px solid #FECACA; border-radius:4px; padding:8px 12px; font-size:12px; font-family:monospace; white-space:pre-wrap; }
+.step-pair { display:flex; gap:12px; margin-top:8px; }
+.step-pair img { max-width:48%; border:1px solid var(--border); border-radius:4px; }
+
+/* 自愈日志 */
+.heal-entry { padding:10px 14px; border-left:3px solid var(--repaired); background:#EFF6FF; margin-bottom:8px; border-radius:4px; font-size:13px; }
+.heal-entry .time { font-size:11px; color:var(--text-secondary); }
+.heal-entry .strategy { font-family:monospace; font-size:12px; }
+
+/* 控制台日志 / 网络请求（共享基础样式） */
+.console-section { margin-top:16px; }
+.network-section { margin-top:16px; }
+.log-summary { font-size:12px; color:var(--text-secondary); margin-bottom:8px; cursor:pointer; }
+.log-entry { font-family:monospace; font-size:11px; padding:2px 8px; border-bottom:1px solid #F1F5F9; display:flex; gap:8px; }
+.network-entry { align-items:baseline; }
+.console-entry .c-type { font-weight:600; min-width:60px; text-transform:uppercase; font-size:10px; }
+.console-entry .c-type.error,.console-entry .c-type.unhandled_error { color:#EF4444; }
+.console-entry .c-type.warning { color:#F59E0B; }
+.console-entry .c-text { flex:1; word-break:break-all; }
+.network-entry .n-status { font-weight:600; min-width:36px; text-align:center; }
+.network-entry .n-status.error { color:#EF4444; }
+.network-entry .n-method { min-width:48px; color:var(--text-secondary); font-size:10px; }
+.network-entry .n-url { flex:1; word-break:break-all; font-size:10px; }
+
+/* 响应式 */
+@media (max-width:640px) {
+  body { padding:12px; }
+  .cards { grid-template-columns:repeat(2,1fr); }
+  .step-pair { flex-direction:column; }
+  .step-pair img { max-width:100%; }
+}
+</style>
+</head>
+</html>

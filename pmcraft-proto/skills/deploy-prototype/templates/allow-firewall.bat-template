@@ -1,0 +1,19 @@
+@echo off
+title Allow prototype port 5178 (LAN)
+netsh advfirewall firewall delete rule name="PmLab-LAN-5178" >nul 2>&1
+netsh advfirewall firewall add rule name="PmLab-LAN-5178" dir=in action=allow protocol=TCP localport=5178
+if %errorlevel% neq 0 goto failed
+echo.
+echo   [OK] Inbound TCP port 5178 is now allowed.
+echo   People on the same LAN can open  http://YOUR-IP:5178/  to view the prototype.
+echo   (Your LAN IP is shown when you run start.bat. Run remove-firewall.bat to undo.)
+echo.
+goto end
+:failed
+echo.
+echo   [FAILED] Could not add the firewall rule.
+echo   This window is probably NOT running as administrator.
+echo   Close it, then RIGHT-CLICK allow-firewall.bat and choose "Run as administrator".
+echo.
+:end
+pause

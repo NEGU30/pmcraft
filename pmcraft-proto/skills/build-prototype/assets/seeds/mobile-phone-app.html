@@ -1,0 +1,281 @@
+<!doctype html>
+<!--
+  proto-builder 种子模板 — 移动-手机 App 模拟
+
+  平台：手机 App 模拟（iPhone 15 Pro 壳 390×844）
+  Chrome：状态栏 + 导航栏 + 内容区 + 底部 TabBar
+  布局范式：原生 App 模拟，页面堆栈导航
+  引入：@import url('../_common.css') — 通用组件样式（运行时位于 prototype/working/_common.css）
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>[REPLACE] Screen Name</title>
+  <link rel="stylesheet" href="../design-system.css" />
+  <style>
+    @import url('../_common.css');
+
+    /* ── Stage (centers device frame on page) ─────────────────────────── */
+    html, body { height: 100%; }
+    body {
+      background: radial-gradient(60% 80% at 50% 0%,
+        color-mix(in oklch, var(--color-primary) 6%, var(--color-background)) 0%,
+        var(--color-background) 60%);
+      display: grid; place-items: center;
+      padding: 32px;
+    }
+    .stage { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .stage-caption {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--color-text-secondary, var(--color-text));
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    }
+
+    /* ── Device Frame (iPhone 15 Pro) ─────────────────────────────────── */
+    .device {
+      position: relative;
+      width: 390px; height: 844px;
+      border-radius: 56px;
+      padding: 12px;
+      background: linear-gradient(160deg, #2a2a2c 0%, #1a1a1c 50%, #0e0e10 100%);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 0 0 2px #000 inset,
+        0 28px 60px -12px rgba(0,0,0,0.45),
+        0 8px 20px -8px rgba(0,0,0,0.35);
+      isolation: isolate;
+    }
+    .device::before, .device::after {
+      content: ''; position: absolute;
+      width: 3px;
+      background: linear-gradient(to bottom,
+        transparent 0%, rgba(255,255,255,0.06) 8%, transparent 16%,
+        transparent 84%, rgba(255,255,255,0.04) 92%, transparent 100%);
+      top: 100px; bottom: 100px;
+    }
+    .device::before { left: -1px; border-radius: 3px 0 0 3px; }
+    .device::after  { right: -1px; border-radius: 0 3px 3px 0; }
+
+    /* ── App Screen ───────────────────────────────────────────────────── */
+    .app-screen {
+      width: 100%; height: 100%;
+      background: var(--color-background);
+      border-radius: 44px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+
+    /* ── Status Bar ───────────────────────────────────────────────────── */
+    .status-bar {
+      height: 54px; /* includes Dynamic Island clearance */
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 28px 6px;
+      font-size: 12px; font-weight: 600;
+      color: var(--color-text);
+      background: var(--color-background);
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    /* Dynamic Island cutout suggestion */
+    .status-bar::before {
+      content: '';
+      position: absolute;
+      top: 10px; left: 50%; transform: translateX(-50%);
+      width: 126px; height: 34px;
+      background: #000;
+      border-radius: 20px;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .status-bar .time { z-index: 11; }
+    .status-bar .icons { display: flex; gap: 4px; z-index: 11; }
+
+    /* ── Nav Bar ──────────────────────────────────────────────────────── */
+    .nav-bar {
+      height: 44px; min-height: 44px;
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 12px;
+      background: var(--color-background);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .nav-back {
+      display: grid; place-items: center;
+      width: 28px; height: 28px;
+      background: none; border: 0; padding: 0;
+      color: var(--color-primary); cursor: pointer;
+    }
+    .nav-title {
+      flex: 1; font-size: 17px; font-weight: 600;
+      text-align: center; letter-spacing: -0.01em;
+    }
+    .nav-action {
+      font-size: 15px; font-weight: 500;
+      color: var(--color-primary);
+      background: none; border: 0; cursor: pointer;
+    }
+
+    /* ── Page Content ─────────────────────────────────────────────────── */
+    .page-content {
+      flex: 1; overflow-y: auto;
+      padding: 16px;
+    }
+
+    /* ── Tab Bar ──────────────────────────────────────────────────────── */
+    .tab-bar {
+      height: 56px; min-height: 56px;
+      display: flex; justify-content: space-around; align-items: center;
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    .tab-item {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      font-size: 10px; font-weight: 500;
+      color: var(--color-text-secondary, var(--color-text));
+      background: none; border: 0; cursor: pointer;
+      padding: 4px 12px;
+      transition: color 0.15s ease;
+    }
+    .tab-item.active { color: var(--color-primary); }
+    .tab-item .tab-icon { width: 22px; height: 22px; }
+
+    /* ── Page Stack ───────────────────────────────────────────────────── */
+    .page-stack { position: relative; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .page-slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      background: var(--color-background);
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .page-slide.slide-in  { transform: translateX(0); }
+    .page-slide.slide-out { transform: translateX(100%); }
+
+    /* ── Action Sheet ─────────────────────────────────────────────────── */
+    .action-sheet-mask {
+      position: absolute; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.3);
+      display: none;
+    }
+    .action-sheet-mask.show { display: block; }
+    .action-sheet {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 101;
+      background: var(--color-surface);
+      border-radius: 16px 16px 0 0;
+      padding: 8px 0 24px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .action-sheet.show { transform: translateY(0); }
+    .action-sheet-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 14px;
+      font-size: 17px; color: var(--color-primary);
+      background: none; border: 0; border-bottom: 1px solid var(--color-border);
+      cursor: pointer;
+      letter-spacing: -0.01em;
+    }
+    .action-sheet-cancel {
+      color: var(--color-text); font-weight: 600;
+      border-bottom: 0; margin-top: 4px;
+    }
+
+    /* ── Toast ────────────────────────────────────────────────────────── */
+    .toast-native {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      z-index: 120;
+      background: var(--color-text);
+      color: var(--color-background);
+      padding: 8px 16px; border-radius: 20px;
+      font-size: 13px; font-weight: 500;
+      opacity: 0; transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .toast-native.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <span class="stage-caption">[REPLACE] 手机 App 原型 · <strong>[REPLACE] 屏幕名称</strong></span>
+
+    <div class="device">
+      <div class="app-screen">
+        <!-- ═══ STATUS BAR ═══ -->
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <span class="icons">[REPLACE]</span>
+        </div>
+
+        <!-- ═══ PAGE STACK ═══ -->
+        <div class="page-stack" data-pb-id="page-stack">
+          <!-- Active page -->
+          <div class="page-slide slide-in" data-pb-id="active-page">
+            <div class="nav-bar">
+              <button type="button" id="navBack" class="nav-back" title="返回"><svg class="icon icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg></button>
+              <span class="nav-title">[REPLACE] 标题</span>
+              <button type="button" id="navAction" class="nav-action">[REPLACE] 编辑</button>
+            </div>
+
+            <main class="page-content" data-pb-id="content">
+              <!-- ═══════════════════════════════════════════════════════════
+                   PASTE LAYOUTS FROM references/layouts/mobile-phone-app-layouts.md HERE.
+                   ═══════════════════════════════════════════════════════════ -->
+            </main>
+          </div>
+        </div>
+
+        <!-- ═══ TAB BAR ═══ -->
+        <nav class="tab-bar" data-pb-id="tab-bar">
+          <button type="button" id="tabHome" class="tab-item active">
+            <svg class="icon icon-lg tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <span>首页</span>
+          </button>
+          <button type="button" id="tabSearch" class="tab-item">
+            <svg class="icon icon-md tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" /></svg>
+            <span>搜索</span>
+          </button>
+          <button type="button" id="tabPublish" class="tab-item">
+            <svg class="icon icon-lg tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+            <span>发布</span>
+          </button>
+          <button type="button" id="tabMessages" class="tab-item">
+            <svg class="icon icon-md tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0" />
+  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></svg>
+            <span>消息</span>
+          </button>
+          <button type="button" id="tabProfile" class="tab-item">
+            <svg class="icon icon-md tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+  <circle cx="12" cy="7" r="4" /></svg>
+            <span>我的</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+    <!-- ═══ ACTION SHEET (hidden) ═══ -->
+    <div class="action-sheet-mask" id="actionSheetMask" onclick="this.classList.remove('show');document.getElementById('actionSheet').classList.remove('show')"></div>
+    <div class="action-sheet" id="actionSheet">
+      <button type="button" id="actionSheetOpt1" class="action-sheet-btn">[REPLACE] 选项一</button>
+      <button type="button" id="actionSheetOpt2" class="action-sheet-btn">[REPLACE] 选项二</button>
+      <button type="button" id="actionSheetDelete" class="action-sheet-btn text-danger">[REPLACE] 删除</button>
+      <button type="button" id="actionSheetCancel" class="action-sheet-btn action-sheet-cancel" onclick="document.getElementById('actionSheetMask').classList.remove('show');this.parentElement.classList.remove('show')">取消</button>
+    </div>
+
+    <!-- ═══ TOAST (hidden) ═══ -->
+    <div class="toast-native" id="toast">[REPLACE] 提示信息</div>
+  </div>
+  <script>
+    /* action sheet helpers */
+    window.showActionSheet = function() {
+      document.getElementById('actionSheetMask').classList.add('show');
+      document.getElementById('actionSheet').classList.add('show');
+    };
+    window.showToast = function(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2000);
+    };
+  </script>
+</body>
+</html>

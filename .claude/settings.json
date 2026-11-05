@@ -1,0 +1,151 @@
+{
+  "skills": {
+    "pmcraft-coach:thinking-coach": {
+      "enabled": true
+    },
+    "pmcraft-coach:concept-coach": {
+      "enabled": true
+    },
+    "pmcraft-coach:grilling-coach": {
+      "enabled": true
+    },
+    "pmcraft-prompt:write-prompt": {
+      "enabled": true
+    },
+    "pmcraft-req:explore-solutions": {
+      "enabled": true
+    },
+    "pmcraft-req:analyze-competitor": {
+      "enabled": true
+    },
+    "pmcraft-req:analyze-business": {
+      "enabled": true
+    },
+    "pmcraft-req:verify-direction": {
+      "enabled": true
+    },
+    "pmcraft-req:design-interview": {
+      "enabled": true
+    },
+    "pmcraft-req:design-survey": {
+      "enabled": true
+    },
+    "pmcraft-req:deploy-survey": {
+      "enabled": true
+    },
+    "pmcraft-req:synthesize-research": {
+      "enabled": true
+    },
+    "pmcraft-req:write-brief": {
+      "enabled": true
+    },
+    "pmcraft-req:generate-prd": {
+      "enabled": true
+    },
+    "pmcraft-req:append-prd": {
+      "enabled": true
+    },
+    "pmcraft-req:revise-prd": {
+      "enabled": true
+    },
+    "pmcraft-req:revise-from-meeting": {
+      "enabled": true
+    },
+    "pmcraft-req:compact-prd": {
+      "enabled": true
+    },
+    "pmcraft-req:generate-flowchart": {
+      "enabled": true
+    },
+    "pmcraft-req:generate-sequence": {
+      "enabled": true
+    },
+    "pmcraft-req:generate-testcase": {
+      "enabled": true
+    },
+    "pmcraft-req:review-journey": {
+      "enabled": true
+    },
+    "pmcraft-req:review-brief": {
+      "enabled": true
+    },
+    "pmcraft-req:review-prd": {
+      "enabled": true
+    },
+    "pmcraft-req:check-consistency": {
+      "enabled": true
+    },
+    "pmcraft-req:plan-iteration": {
+      "enabled": true
+    },
+    "pmcraft-req:save-doc": {
+      "enabled": true
+    },
+    "pmcraft-req:log-decisions": {
+      "enabled": true
+    },
+    "pmcraft-proto:initialize-structure": {
+      "enabled": true
+    },
+    "pmcraft-proto:write-spec": {
+      "enabled": true
+    },
+    "pmcraft-proto:set-style": {
+      "enabled": true
+    },
+    "pmcraft-proto:extract-design": {
+      "enabled": true
+    },
+    "pmcraft-proto:plan-pages": {
+      "enabled": true
+    },
+    "pmcraft-proto:build-prototype": {
+      "enabled": true
+    },
+    "pmcraft-proto:annotate-prototype": {
+      "enabled": true
+    },
+    "pmcraft-proto:check-quality": {
+      "enabled": true
+    },
+    "pmcraft-proto:review-ux": {
+      "enabled": true
+    },
+    "pmcraft-proto:save-version": {
+      "enabled": true
+    },
+    "pmcraft-proto:deploy-prototype": {
+      "enabled": true
+    },
+    "pmcraft-proto:record-lessons": {
+      "enabled": true
+    },
+    "pmcraft-proto:extend-html": {
+      "enabled": true
+    },
+    "pmcraft-dev:prepare-dev": {
+      "enabled": true
+    },
+    "pmcraft-infra:init-project": {
+      "enabled": true
+    },
+    "pmcraft-test:setup-tests": {
+      "enabled": true
+    },
+    "pmcraft-test:run-tests": {
+      "enabled": true
+    },
+    "pmcraft-test:collect-manual": {
+      "enabled": true
+    },
+    "pmcraft-test:generate-report": {
+      "enabled": true
+    },
+    "pmcraft-test:review-tests": {
+      "enabled": true
+    },
+    "pmcraft-test:walkthrough": {
+      "enabled": true
+    }
+  }
+}
